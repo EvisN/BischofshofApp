@@ -9,12 +9,29 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="lp.german.bischofshofpresenter.app.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="lp.german.bischofshofpresenter.app.NeuesProjektActivity"
+            android:label="@string/title_activity_neues_projekt" >
+        </activity>
+        <activity
+            android:name="lp.german.bischofshofpresenter.app.ProjektBearbeitenActivity"
+            android:label="@string/title_activity_projekt_bearbeiten" >
+        </activity>
+        <activity
+            android:name="lp.german.bischofshofpresenter.app.EinstellungenActivity"
+            android:label="@string/title_activity_einstellungen" >
+        </activity>
+        <activity
+            android:name="lp.german.bischofshofpresenter.app.PraesentationsActivity"
+            android:label="@string/title_activity_praesentations" >
         </activity>
     </application>
 

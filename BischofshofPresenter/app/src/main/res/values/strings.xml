@@ -3,5 +3,10 @@
 
     <string name="app_name">Bischofshof Presenter</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_neues_projekt">NeuesProjektActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_projekt_bearbeiten">ProjektBearbeiten</string>
+    <string name="title_activity_einstellungen">EinstellungenActivity</string>
+    <string name="title_activity_praesentations">PraesentationsActivity</string>
 
 </resources>

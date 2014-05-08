@@ -4,9 +4,52 @@
     android:layout_height="match_parent"
     tools:context="${packageName}.${activityClass}">
 
-    <TextView
-        android:text="@string/hello_world"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <View
+        android:layout_width="1dp"
+        android:layout_height="fill_parent"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/space_horizontal"
+        android:background="@android:color/black"
+        />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_centerVertical="true"
+        android:id="@+id/space_vertical"
+        android:background="@android:color/black"/>
+
+    <ImageButton
+        android:layout_width="450dp"
+        android:layout_height="270dp"
+        android:layout_above="@id/space_vertical"
+        android:layout_toLeftOf="@id/space_horizontal"
+        android:layout_margin="50dp"
+        android:id="@+id/btn_neues_projekt"
+        />
+
+    <ImageButton
+        android:layout_width="450dp"
+        android:layout_height="270dp"
+        android:layout_above="@id/space_vertical"
+        android:layout_toRightOf="@id/space_horizontal"
+        android:layout_margin="50dp"
+        android:id="@+id/btn_einstellungen"/>
+
+    <ImageButton
+        android:layout_width="450dp"
+        android:layout_height="270dp"
+        android:layout_below="@id/space_vertical"
+        android:layout_toLeftOf="@id/space_horizontal"
+        android:layout_margin="50dp"
+        android:id="@+id/btn_projekt_bearbeiten"/>
+
+    <ImageButton
+        android:layout_width="450dp"
+        android:layout_height="270dp"
+        android:layout_below="@id/space_vertical"
+        android:layout_toRightOf="@id/space_horizontal"
+        android:layout_margin="50dp"
+        android:id="@+id/btn_praesentation_starten"/>
 
 </RelativeLayout>
