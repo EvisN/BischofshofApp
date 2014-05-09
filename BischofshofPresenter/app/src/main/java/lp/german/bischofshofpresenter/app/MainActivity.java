@@ -9,6 +9,7 @@ import android.widget.ImageButton;
 public class MainActivity extends Activity {
 
     private ImageButton btnNeuesProjekt, btnProjektBearbeiten, btnEinstellungen, btnPraesentationStarten;
+    private FileHandler fileHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +18,8 @@ public class MainActivity extends Activity {
 
         setupUIElements();
         addUIClickListeners();
+
+        fileHandler = new FileHandler(this);
     }
 
     private void setupUIElements(){
@@ -58,8 +61,7 @@ public class MainActivity extends Activity {
         btnPraesentationStarten.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), PraesentationsActivity.class);
-                startActivity(i);
+                fileHandler.getPräsentationen();
             }
         });
 

@@ -9,7 +9,7 @@
         android:layout_height="fill_parent"
         android:layout_centerHorizontal="true"
         android:id="@+id/space_horizontal"
-        android:background="@android:color/black"
+
         />
 
     <View
@@ -17,7 +17,7 @@
         android:layout_height="1dp"
         android:layout_centerVertical="true"
         android:id="@+id/space_vertical"
-        android:background="@android:color/black"/>
+        />
 
     <ImageButton
         android:layout_width="450dp"
