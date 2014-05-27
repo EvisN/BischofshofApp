@@ -73,12 +73,13 @@
         android:layout_toRightOf="@id/navigation"
         />
 
-    <TextView
+    <Button
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toRightOf="@id/navigation"
         android:gravity="center"
         android:text="Präsentation"
+        android:id="@+id/btn_start_presentation"
         />
 
 </RelativeLayout>
