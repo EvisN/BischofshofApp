@@ -25,39 +25,44 @@
             android:background="@android:color/darker_gray"
         />
 
-        <ImageButton
+        <Button
             android:layout_width="fill_parent"
             android:layout_height="100dp"
             android:layout_marginTop="5dp"
             android:layout_below="@id/img_logo"
             android:id="@+id/btn_new_presentation"
             android:background="@android:color/darker_gray"
+            android:text="Neue Präsentation"
             />
 
-        <ImageButton
+        <Button
             android:layout_width="fill_parent"
             android:layout_height="100dp"
             android:layout_marginTop="5dp"
             android:layout_below="@id/btn_new_presentation"
             android:id="@+id/btn_saved_presentations"
             android:background="@android:color/darker_gray"
+            android:text="Gespeicherte Präsentationen"
             />
 
-        <ImageButton
+        <Button
             android:layout_width="fill_parent"
             android:layout_height="100dp"
             android:layout_marginTop="5dp"
             android:layout_below="@id/btn_saved_presentations"
             android:id="@+id/btn_schnellzugriff"
             android:background="@android:color/darker_gray"
+            android:text="Schnellzugriff"
             />
 
-        <ImageButton
+        <Button
             android:layout_width="fill_parent"
             android:layout_height="100dp"
             android:layout_alignParentBottom="true"
             android:id="@+id/btn_einstellungen"
-            android:background="@android:color/darker_gray"/>
+            android:background="@android:color/darker_gray"
+            android:text="Einstellungen"
+            />
 
     </RelativeLayout>
 
@@ -66,6 +71,14 @@
         android:layout_height="fill_parent"
         android:background="@android:color/black"
         android:layout_toRightOf="@id/navigation"
+        
         />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@id/navigation"
+        android:gravity="center"
+        android:text="Präsentation"/>
 
 </RelativeLayout>
