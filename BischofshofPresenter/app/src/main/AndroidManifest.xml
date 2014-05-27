@@ -33,6 +33,10 @@
             android:name="lp.german.bischofshofpresenter.app.PraesentationsActivity"
             android:label="@string/title_activity_praesentations" >
         </activity>
+        <activity
+            android:name=".ProjektListeActivity"
+            android:label="@string/title_activity_projekt_liste_aktivity" >
+        </activity>
     </application>
 
 </manifest>

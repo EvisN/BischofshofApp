@@ -8,5 +8,6 @@
     <string name="title_activity_projekt_bearbeiten">ProjektBearbeiten</string>
     <string name="title_activity_einstellungen">EinstellungenActivity</string>
     <string name="title_activity_praesentations">PraesentationsActivity</string>
+    <string name="title_activity_projekt_liste_aktivity">ProjektListeAktivity</string>
 
 </resources>
