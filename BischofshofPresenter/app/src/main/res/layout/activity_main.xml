@@ -71,7 +71,6 @@
         android:layout_height="fill_parent"
         android:background="@android:color/black"
         android:layout_toRightOf="@id/navigation"
-        
         />
 
     <TextView
@@ -79,6 +78,7 @@
         android:layout_height="match_parent"
         android:layout_toRightOf="@id/navigation"
         android:gravity="center"
-        android:text="Präsentation"/>
+        android:text="Präsentation"
+        />
 
 </RelativeLayout>
