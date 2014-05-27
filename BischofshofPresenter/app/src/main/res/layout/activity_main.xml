@@ -19,37 +19,16 @@
         android:id="@+id/space_vertical"
         />
 
-    <ImageButton
-        android:layout_width="450dp"
-        android:layout_height="270dp"
-        android:layout_above="@id/space_vertical"
-        android:layout_toLeftOf="@id/space_horizontal"
-        android:layout_margin="50dp"
-        android:id="@+id/btn_neues_projekt"
+    <LinearLayout
+        android:layout_width="250dp"
+        android:layout_height="fill_parent">
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="200dp"
+            
         />
 
-    <ImageButton
-        android:layout_width="450dp"
-        android:layout_height="270dp"
-        android:layout_above="@id/space_vertical"
-        android:layout_toRightOf="@id/space_horizontal"
-        android:layout_margin="50dp"
-        android:id="@+id/btn_einstellungen"/>
-
-    <ImageButton
-        android:layout_width="450dp"
-        android:layout_height="270dp"
-        android:layout_below="@id/space_vertical"
-        android:layout_toLeftOf="@id/space_horizontal"
-        android:layout_margin="50dp"
-        android:id="@+id/btn_projekt_bearbeiten"/>
-
-    <ImageButton
-        android:layout_width="450dp"
-        android:layout_height="270dp"
-        android:layout_below="@id/space_vertical"
-        android:layout_toRightOf="@id/space_horizontal"
-        android:layout_margin="50dp"
-        android:id="@+id/btn_praesentation_starten"/>
+    </LinearLayout>
 
 </RelativeLayout>
