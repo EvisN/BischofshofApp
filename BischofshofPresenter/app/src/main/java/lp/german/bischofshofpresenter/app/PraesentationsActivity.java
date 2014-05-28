@@ -51,22 +51,23 @@ public class PraesentationsActivity extends Activity {
         }
     }
 
-    private void setupScrollViewContent(File[] files){
+    private void setupScrollViewContent(final File[] files){
 
 
         for(int i = 0; i<files.length; i++)
         {
-            final int nCurrentIndex = i;
+            final File currentFile = files[i];
+            String fileName = currentFile.getName();
             LayoutInflater vi = (LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View v = vi.inflate(R.layout.file_template, null);
 
             TextView textView = (TextView)v.findViewById(R.id.file_template_text);
-            textView.setText(files[i].getName().substring(0,10)+"...");
+            textView.setText(fileName.substring(0, 10)+"...");
 
             ImageView imageView = (ImageView)v.findViewById(R.id.file_template_img);
 
 
-            if(fileUtilities.getFileExtension(files[i].getName()).equals("pdf")){
+            if(fileUtilities.getFileExtension(fileName).equals("pdf")){
                 imageView.setImageResource(R.drawable.pdf2);
             }else {
                 imageView.setImageResource(R.drawable.video);
@@ -77,7 +78,7 @@ public class PraesentationsActivity extends Activity {
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openFile(nCurrentIndex);
+                    openFile(currentFile.getAbsolutePath());
                 }
             });
             ((ViewGroup)fileList).addView(v);
@@ -86,8 +87,8 @@ public class PraesentationsActivity extends Activity {
     }
 
     //Diese Methode wird bei Click auf ein File im Menu aufgerufen und soll später dann dieses File in der Präsentation starten
-    private void openFile(int i){
-        Toast toast = Toast.makeText(getApplicationContext(),"Öffne jetzt File an Index Nr "+String.valueOf(i),Toast.LENGTH_SHORT);
+    private void openFile(String s){
+        Toast toast = Toast.makeText(getApplicationContext(),"Öffne jetzt File "+s,Toast.LENGTH_SHORT);
         toast.show();
     }
 
