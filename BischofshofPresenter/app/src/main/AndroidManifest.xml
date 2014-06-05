@@ -34,8 +34,13 @@
             android:label="@string/title_activity_praesentations" >
         </activity>
         <activity
-            android:name=".ProjektListeActivity"
+            android:name="lp.german.bischofshofpresenter.app.ProjektListeActivity"
             android:label="@string/title_activity_projekt_liste_aktivity" >
+        </activity>
+        <activity
+            android:name="lp.german.bischofshofpresenter.app.SlideUpMenu"
+            android:label="@string/title_activity_slide_up_menu"
+            android:theme="@style/Theme.Transparent">
         </activity>
     </application>
 

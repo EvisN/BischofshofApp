@@ -2,35 +2,38 @@ package lp.german.bischofshofpresenter.app;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.io.File;
+import java.util.ArrayList;
 
-public class PraesentationsActivity extends Activity {
+import lp.german.bischofshofpresenter.app.SimpleGestureFilter.SimpleGestureListener;
 
-    private PresentationFile[] files;
+public class PraesentationsActivity extends Activity implements SimpleGestureListener{
+
+
     private FileUtilities fileUtilities = new FileUtilities();
-
-
+    private SimpleGestureFilter detector;
+    private File[] filesList;
+    private ArrayList<String> filePaths;
+    private TextView platzHalter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        detector = new SimpleGestureFilter(this,this);
 
         //Setze Activity Fullscreen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -43,12 +46,17 @@ public class PraesentationsActivity extends Activity {
 
         //Speichere alle Files im Hauptordner in ein Array aus Files
         File dir = new File(path);
-        File[] filesList = dir.listFiles();
+        filesList = dir.listFiles();
+        filePaths = new ArrayList<String>();
 
-        //Wenn die Fileliste nicht leer ist, kann das Menü unten befüllt werden
+        
         if(filesList!=null){
-            setupScrollViewContent(filesList);
+            for (int i = 0; i< filesList.length; i++){
+                filePaths.add(filesList[i].getAbsolutePath());
+            }
+            //setupScrollViewContent(filesList);
         }
+
     }
 
     private void setupScrollViewContent(final File[] files){
@@ -92,4 +100,53 @@ public class PraesentationsActivity extends Activity {
         toast.show();
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent me){
+
+        this.detector.onTouchEvent(me);
+        return super.dispatchTouchEvent(me);
+        }
+    @Override
+    public void onSwipe(int direction) {
+        String str = "";
+
+        switch (direction) {
+            case SimpleGestureFilter.SWIPE_RIGHT :
+                str = "Swipe Right";
+                break;
+            case SimpleGestureFilter.SWIPE_LEFT :
+                str = "Swipe Left";
+                break;
+            case SimpleGestureFilter.SWIPE_DOWN :
+                str = "Swipe Down";
+                break;
+            case SimpleGestureFilter.SWIPE_UP :
+                str = "Swipe Up";
+                Intent i = new Intent(this,SlideUpMenu.class);
+                i.putStringArrayListExtra("filePaths", filePaths);
+                startActivityForResult(i,1);
+                break;
+            }
+        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+        }
+
+    @Override
+    public void onDoubleTap() {
+        Toast.makeText(this, "Double Tap", Toast.LENGTH_SHORT).show();
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == 1) {
+            if(resultCode == RESULT_OK){
+                Toast toast = Toast.makeText(this,"Result: "+data.getStringExtra("path"),Toast.LENGTH_SHORT);
+                toast.show();
+                platzHalter = (TextView)findViewById(R.id.presentation);
+                platzHalter.setText(data.getStringExtra("path"));
+            }
+            if (resultCode == RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }
 }

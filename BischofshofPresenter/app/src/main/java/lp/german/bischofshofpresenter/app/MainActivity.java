@@ -9,7 +9,7 @@ import android.widget.ImageButton;
 
 public class MainActivity extends Activity {
 
-    private Button btnStartPresentation;
+    private ImageButton btnStartPresentation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +24,7 @@ public class MainActivity extends Activity {
     private void setupUIElements(){
 
         //Navigationsbuttons
-        btnStartPresentation = (Button)findViewById(R.id.btn_start_presentation);
+        btnStartPresentation = (ImageButton)findViewById(R.id.btn_start_presentation);
 
     }
 

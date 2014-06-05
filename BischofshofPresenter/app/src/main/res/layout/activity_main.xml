@@ -25,43 +25,36 @@
             android:background="@android:color/darker_gray"
         />
 
-        <Button
+        <ImageButton
             android:layout_width="fill_parent"
             android:layout_height="100dp"
-            android:layout_marginTop="5dp"
             android:layout_below="@id/img_logo"
             android:id="@+id/btn_new_presentation"
-            android:background="@android:color/darker_gray"
-            android:text="Neue Präsentation"
+            android:background="@drawable/btn_neue_praesentation"
             />
 
-        <Button
+        <ImageButton
             android:layout_width="fill_parent"
             android:layout_height="100dp"
-            android:layout_marginTop="5dp"
             android:layout_below="@id/btn_new_presentation"
             android:id="@+id/btn_saved_presentations"
-            android:background="@android:color/darker_gray"
-            android:text="Gespeicherte Präsentationen"
+            android:background="@drawable/btn_gespeicherte_praesentationen"
             />
 
-        <Button
+        <ImageButton
             android:layout_width="fill_parent"
             android:layout_height="100dp"
-            android:layout_marginTop="5dp"
             android:layout_below="@id/btn_saved_presentations"
             android:id="@+id/btn_schnellzugriff"
-            android:background="@android:color/darker_gray"
-            android:text="Schnellzugriff"
+            android:background="@drawable/btn_schnellzugriff"
             />
 
-        <Button
+        <ImageButton
             android:layout_width="fill_parent"
             android:layout_height="100dp"
             android:layout_alignParentBottom="true"
             android:id="@+id/btn_einstellungen"
-            android:background="@android:color/darker_gray"
-            android:text="Einstellungen"
+            android:background="@drawable/btn_einstellungen"
             />
 
     </RelativeLayout>
@@ -73,13 +66,21 @@
         android:layout_toRightOf="@id/navigation"
         />
 
-    <Button
+    <ImageButton
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toRightOf="@id/navigation"
         android:gravity="center"
-        android:text="Präsentation"
+        android:background="@drawable/frame_screen"
         android:id="@+id/btn_start_presentation"
         />
+
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:text="test"
+        android:layout_alignTop="@id/btn_start_presentation"
+        android:layout_marginTop="300dp"
+        android:layout_marginLeft="300dp"/>
 
 </RelativeLayout>
