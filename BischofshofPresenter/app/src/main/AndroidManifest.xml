@@ -18,11 +18,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="lp.german.bischofshofpresenter.app.NeuesProjektActivity"
+            android:name=".NeuesPraesentationActivity"
             android:label="@string/title_activity_neues_projekt" >
         </activity>
         <activity
-            android:name="lp.german.bischofshofpresenter.app.ProjektBearbeitenActivity"
+            android:name=".GespeichertePraesentationenActivity"
             android:label="@string/title_activity_projekt_bearbeiten" >
         </activity>
         <activity
@@ -34,7 +34,7 @@
             android:label="@string/title_activity_praesentations" >
         </activity>
         <activity
-            android:name="lp.german.bischofshofpresenter.app.ProjektListeActivity"
+            android:name=".SchnellzugriffActivity"
             android:label="@string/title_activity_projekt_liste_aktivity" >
         </activity>
         <activity

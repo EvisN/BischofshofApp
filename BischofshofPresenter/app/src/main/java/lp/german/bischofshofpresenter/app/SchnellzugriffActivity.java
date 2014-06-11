@@ -6,7 +6,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 
-public class ProjektListeActivity extends Activity {
+public class SchnellzugriffActivity extends Activity {
 
     private ListView listProjekte;
     private ListAdapter listAdapter;

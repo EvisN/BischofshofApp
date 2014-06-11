@@ -64,28 +64,29 @@
 
     </RelativeLayout>
 
+   <RelativeLayout
+       android:layout_width="fill_parent"
+       android:layout_height="fill_parent"
+       android:layout_toRightOf="@id/navigation">
+
     <View
         android:layout_width="1dp"
         android:layout_height="fill_parent"
         android:background="@android:color/black"
-        android:layout_toRightOf="@id/navigation"
         />
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_toRightOf="@id/navigation"
         android:gravity="center"
         android:id="@+id/background_start_presentation"
-        android:background="#f9bf54"
         android:src="@drawable/background_line"
         />
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_toRightOf="@id/navigation"
-        android:gravity="center"
+        android:layout_width="600dp"
+        android:layout_height="400dp"
+        android:layout_centerInParent="true"
         android:id="@+id/btn_start_presentation"
         android:scaleType="fitXY"
         />
@@ -97,5 +98,7 @@
         android:layout_alignTop="@id/btn_start_presentation"
         android:layout_marginTop="300dp"
         android:layout_marginLeft="300dp"/>
+
+   </RelativeLayout>
 
 </RelativeLayout>

@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -12,7 +13,7 @@ import android.widget.ImageView;
 
 public class MainActivity extends Activity {
 
-    private ImageView btnStartPresentation, imgLogo, btnEinstellungen, btnNeuePraesentation, btnGespeichertePraesentationen, btnSchnellzugriff;
+    private ImageView btnStartPresentation, imgLogo, btnEinstellungen, btnNeuePraesentation, btnGespeichertePraesentationen, btnSchnellzugriff, backgroundStartPresentation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +28,7 @@ public class MainActivity extends Activity {
     private void setupUIElements(){
 
         imgLogo = (ImageView)findViewById(R.id.img_logo);
+        backgroundStartPresentation = (ImageView)findViewById(R.id.background_start_presentation);
 
         //Navigationsbuttons
         btnStartPresentation = (ImageView)findViewById(R.id.btn_start_presentation);
@@ -55,6 +57,30 @@ public class MainActivity extends Activity {
                 startActivity(i);
             }
         });
+
+        btnNeuePraesentation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), NeuesPraesentationActivity.class);
+                startActivity(i);
+            }
+        });
+
+        btnSchnellzugriff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(),SchnellzugriffActivity.class);
+                startActivity(i);
+            }
+        });
+
+        btnGespeichertePraesentationen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(),GespeichertePraesentationenActivity.class);
+                startActivity(i);
+            }
+        });
     }
 
     @Override
@@ -72,19 +98,21 @@ public class MainActivity extends Activity {
 
     private void setLayoutBischofshof(){
         imgLogo.setImageResource(R.drawable.logo_bischofshof);
-        btnStartPresentation.setImageResource(R.drawable.frame_screen);
-        btnSchnellzugriff.setImageResource(R.drawable.btn_schnellzugriff);
-        btnNeuePraesentation.setImageResource(R.drawable.btn_neue_praesentation);
-        btnGespeichertePraesentationen.setImageResource(R.drawable.btn_gespeicherte_praesentationen);
+        btnStartPresentation.setImageResource(R.drawable.btn_frame);
+        btnSchnellzugriff.setImageResource(R.drawable.btn_schnellzugriff_selector);
+        btnNeuePraesentation.setImageResource(R.drawable.btn_neue_praesentation_selector);
+        btnGespeichertePraesentationen.setImageResource(R.drawable.btn_gespeicherte_praesentationen_selector);
         btnEinstellungen.setImageResource(R.drawable.btn_einstellungen_selector);
+        backgroundStartPresentation.setBackgroundResource(R.drawable.skyline);
     }
 
     private void setLayoutWeltenburger(){
         imgLogo.setImageResource(R.drawable.logo_weltenburger);
-        btnStartPresentation.setImageResource(R.drawable.frame_screen_wb);
-        btnSchnellzugriff.setImageResource(R.drawable.btn_schnellzugriff_wb);
-        btnNeuePraesentation.setImageResource(R.drawable.btn_neue_praesentation_wb);
-        btnGespeichertePraesentationen.setImageResource(R.drawable.btn_gespeicherte_praesentationen_wb);
+        btnStartPresentation.setImageResource(R.drawable.btn_frame_wb);
+        btnSchnellzugriff.setImageResource(R.drawable.btn_schnellzugriff_wb_selector);
+        btnNeuePraesentation.setImageResource(R.drawable.btn_neue_praesentation_wb_selector);
+        btnGespeichertePraesentationen.setImageResource(R.drawable.btn_gespeicherte_praesentationen_wb_selector);
         btnEinstellungen.setImageResource(R.drawable.btn_einstellungen_selector_wb);
+        backgroundStartPresentation.setBackgroundColor(Color.WHITE);
     }
 }
