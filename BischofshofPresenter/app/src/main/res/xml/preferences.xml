@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="pref_marke"
+        android:title="Erscheinungsbild"
+        android:dialogTitle="Wählen sie das gewünschte Layout"
+        android:entries="@array/marken"
+        android:entryValues="@array/marken_values"
+        android:defaultValue="Bischofshof" />
+</PreferenceScreen>

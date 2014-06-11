@@ -42,6 +42,10 @@
             android:label="@string/title_activity_slide_up_menu"
             android:theme="@style/Theme.Transparent">
         </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="Settings">
+        </activity>
     </application>
 
 </manifest>

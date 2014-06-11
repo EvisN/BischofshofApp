@@ -20,41 +20,46 @@
 
         <ImageView
             android:layout_width="fill_parent"
-            android:layout_height="200dp"
+            android:layout_height="fill_parent"
+            android:background="@drawable/navigation_background"/>
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/img_logo"
-            android:background="@android:color/darker_gray"
+            android:background="@android:color/transparent"
         />
 
-        <ImageButton
+        <ImageView
             android:layout_width="fill_parent"
             android:layout_height="100dp"
             android:layout_below="@id/img_logo"
             android:id="@+id/btn_new_presentation"
-            android:background="@drawable/btn_neue_praesentation"
+            android:scaleType="fitXY"
             />
 
-        <ImageButton
+        <ImageView
             android:layout_width="fill_parent"
             android:layout_height="100dp"
             android:layout_below="@id/btn_new_presentation"
             android:id="@+id/btn_saved_presentations"
-            android:background="@drawable/btn_gespeicherte_praesentationen"
+            android:scaleType="fitXY"
             />
 
-        <ImageButton
+        <ImageView
             android:layout_width="fill_parent"
             android:layout_height="100dp"
             android:layout_below="@id/btn_saved_presentations"
             android:id="@+id/btn_schnellzugriff"
-            android:background="@drawable/btn_schnellzugriff"
+            android:scaleType="fitXY"
             />
 
-        <ImageButton
+        <ImageView
             android:layout_width="fill_parent"
             android:layout_height="100dp"
             android:layout_alignParentBottom="true"
             android:id="@+id/btn_einstellungen"
-            android:background="@drawable/btn_einstellungen"
+            android:scaleType="fitXY"
             />
 
     </RelativeLayout>
@@ -66,19 +71,29 @@
         android:layout_toRightOf="@id/navigation"
         />
 
-    <ImageButton
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toRightOf="@id/navigation"
         android:gravity="center"
-        android:background="@drawable/frame_screen"
+        android:id="@+id/background_start_presentation"
+        android:background="#f9bf54"
+        android:src="@drawable/background_line"
+        />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@id/navigation"
+        android:gravity="center"
         android:id="@+id/btn_start_presentation"
+        android:scaleType="fitXY"
         />
 
     <TextView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:text="test"
+        android:text="Content"
         android:layout_alignTop="@id/btn_start_presentation"
         android:layout_marginTop="300dp"
         android:layout_marginLeft="300dp"/>

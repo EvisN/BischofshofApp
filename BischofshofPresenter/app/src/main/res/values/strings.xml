@@ -11,4 +11,13 @@
     <string name="title_activity_projekt_liste_aktivity">ProjektListeAktivity</string>
     <string name="title_activity_slide_up_menu">SlideUpMenu</string>
 
+    <string-array name="marken">
+        <item>Bischofshof</item>
+        <item>Weltenburger</item>
+    </string-array>
+
+    <string-array name="marken_values">
+        <item>pref_bischofshof</item>
+        <item>pref_weltenburger</item>
+    </string-array>
 </resources>

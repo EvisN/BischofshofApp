@@ -1,15 +1,18 @@
 package lp.german.bischofshofpresenter.app;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 public class MainActivity extends Activity {
 
-    private ImageButton btnStartPresentation;
+    private ImageView btnStartPresentation, imgLogo, btnEinstellungen, btnNeuePraesentation, btnGespeichertePraesentationen, btnSchnellzugriff;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,9 +26,14 @@ public class MainActivity extends Activity {
 
     private void setupUIElements(){
 
-        //Navigationsbuttons
-        btnStartPresentation = (ImageButton)findViewById(R.id.btn_start_presentation);
+        imgLogo = (ImageView)findViewById(R.id.img_logo);
 
+        //Navigationsbuttons
+        btnStartPresentation = (ImageView)findViewById(R.id.btn_start_presentation);
+        btnEinstellungen = (ImageView)findViewById(R.id.btn_einstellungen);
+        btnNeuePraesentation = (ImageView)findViewById(R.id.btn_new_presentation);
+        btnGespeichertePraesentationen = (ImageView)findViewById(R.id.btn_saved_presentations);
+        btnSchnellzugriff = (ImageView)findViewById(R.id.btn_schnellzugriff);
     }
 
     private void addUIClickListeners(){
@@ -40,5 +48,43 @@ public class MainActivity extends Activity {
             }
         });
 
+        btnEinstellungen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), SettingsActivity.class);
+                startActivity(i);
+            }
+        });
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String gewaehlteMarke = sharedPref.getString(SettingsActivity.KEY_PREF_MARKE, "");
+
+        if(gewaehlteMarke.equals("pref_bischofshof")){
+            setLayoutBischofshof();
+        }else{
+            setLayoutWeltenburger();
+        }
+    }
+
+    private void setLayoutBischofshof(){
+        imgLogo.setImageResource(R.drawable.logo_bischofshof);
+        btnStartPresentation.setImageResource(R.drawable.frame_screen);
+        btnSchnellzugriff.setImageResource(R.drawable.btn_schnellzugriff);
+        btnNeuePraesentation.setImageResource(R.drawable.btn_neue_praesentation);
+        btnGespeichertePraesentationen.setImageResource(R.drawable.btn_gespeicherte_praesentationen);
+        btnEinstellungen.setImageResource(R.drawable.btn_einstellungen_selector);
+    }
+
+    private void setLayoutWeltenburger(){
+        imgLogo.setImageResource(R.drawable.logo_weltenburger);
+        btnStartPresentation.setImageResource(R.drawable.frame_screen_wb);
+        btnSchnellzugriff.setImageResource(R.drawable.btn_schnellzugriff_wb);
+        btnNeuePraesentation.setImageResource(R.drawable.btn_neue_praesentation_wb);
+        btnGespeichertePraesentationen.setImageResource(R.drawable.btn_gespeicherte_praesentationen_wb);
+        btnEinstellungen.setImageResource(R.drawable.btn_einstellungen_selector_wb);
     }
 }
