@@ -20,4 +20,9 @@
         <item>pref_bischofshof</item>
         <item>pref_weltenburger</item>
     </string-array>
+
+    <string-array name="nav_drawer_items">
+        <item>PDF1</item>
+        <item>PDF2</item>
+    </string-array>
 </resources>

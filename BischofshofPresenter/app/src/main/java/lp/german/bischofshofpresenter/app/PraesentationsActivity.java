@@ -51,6 +51,8 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
         filesList = dir.listFiles();
         filePaths = new ArrayList<String>();
 
+        pdfView = (PDFView) findViewById(R.id.pdfview);
+
 
         if(filesList!=null){
             for (int i = 0; i< filesList.length; i++){
@@ -100,7 +102,7 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
     //Diese Methode wird bei Click auf ein File im Menu aufgerufen und soll später dann dieses File in der Präsentation starten
     private void openFile(File f){
 
-        pdfView = (PDFView) findViewById(R.id.pdfview);
+
         pdfView.fromFile(f)
                 .defaultPage(1)
                 .showMinimap(false)
@@ -132,9 +134,7 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
                 break;
             case SimpleGestureFilter.SWIPE_UP :
                 str = "Swipe Up";
-                pdfView.setVisibility(View.INVISIBLE);
                 Intent i = new Intent(this,SlideUpMenu.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 i.putStringArrayListExtra("filePaths", filePaths);
                 startActivityForResult(i,1);
                 break;
@@ -155,7 +155,6 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
                 toast.show();
                 platzHalter = (TextView)findViewById(R.id.presentation);
                 platzHalter.setText(data.getStringExtra("path"));
-                pdfView.setVisibility(View.VISIBLE);
             }
             if (resultCode == RESULT_CANCELED) {
                 //Write your code if there's no result
