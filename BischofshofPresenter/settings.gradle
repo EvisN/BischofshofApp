@@ -1,1 +1,2 @@
-include ':app', ':lib', ':app2', ':libraries', ':library'
+include ':app', ':lib', ':app2', ':libraries', ':library', ':android-pdfview', ':itextg-5.5.1'
+project(':android-pdfview').projectDir = new File('lib/android-pdfview')

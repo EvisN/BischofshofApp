@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.joanzapata.pdfview.PDFView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
     private File[] filesList;
     private ArrayList<String> filePaths;
     private TextView platzHalter;
+    private PDFView pdfView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +51,12 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
         filesList = dir.listFiles();
         filePaths = new ArrayList<String>();
 
-        
+
         if(filesList!=null){
             for (int i = 0; i< filesList.length; i++){
                 filePaths.add(filesList[i].getAbsolutePath());
             }
-            //setupScrollViewContent(filesList);
+            setupScrollViewContent(filesList);
         }
 
     }
@@ -81,22 +83,29 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
                 imageView.setImageResource(R.drawable.video);
             }
 
-            View fileList = findViewById(R.id.file_scroll_view_linear_layout);
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openFile(currentFile.getAbsolutePath());
+                    openFile(currentFile);
                 }
             });
-            ((ViewGroup)fileList).addView(v);
+
+            View relativeLayout = findViewById(R.id.scroll_view_relative_layout);
+            ((ViewGroup)relativeLayout).addView(v);
         }
 
     }
 
     //Diese Methode wird bei Click auf ein File im Menu aufgerufen und soll später dann dieses File in der Präsentation starten
-    private void openFile(String s){
-        Toast toast = Toast.makeText(getApplicationContext(),"Öffne jetzt File "+s,Toast.LENGTH_SHORT);
+    private void openFile(File f){
+
+        pdfView = (PDFView) findViewById(R.id.pdfview);
+        pdfView.fromFile(f)
+                .defaultPage(1)
+                .load();
+
+        Toast toast = Toast.makeText(getApplicationContext(),"Öffne jetzt File "+f.getAbsolutePath(),Toast.LENGTH_SHORT);
         toast.show();
     }
 
@@ -105,7 +114,7 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
 
         this.detector.onTouchEvent(me);
         return super.dispatchTouchEvent(me);
-        }
+    }
     @Override
     public void onSwipe(int direction) {
         String str = "";
@@ -126,9 +135,9 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
                 i.putStringArrayListExtra("filePaths", filePaths);
                 startActivityForResult(i,1);
                 break;
-            }
-        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
         }
+        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+    }
 
     @Override
     public void onDoubleTap() {

@@ -10,7 +10,9 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/app2" />
+            <option value="$PROJECT_DIR$/itextg-5.5.1" />
             <option value="$PROJECT_DIR$/lib" />
+            <option value="$PROJECT_DIR$/lib/android-pdfview" />
             <option value="$PROJECT_DIR$/libraries" />
             <option value="$PROJECT_DIR$/library" />
           </set>

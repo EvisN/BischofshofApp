@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+    android:id="@+id/scroll_view_relative_layout"
     >
 
     <TextView
@@ -11,6 +12,11 @@
         android:layout_height="match_parent"
         android:gravity="top|center"
         android:id="@+id/presentation"/>
+
+    <com.joanzapata.pdfview.PDFView
+        android:id="@+id/pdfview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </RelativeLayout>
 
