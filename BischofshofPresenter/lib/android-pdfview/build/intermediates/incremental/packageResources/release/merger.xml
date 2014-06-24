@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="2" >
+
+    <dataSet config="main" >
+        <source path="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/lib/android-pdfview/src/main/res" />
+        <source path="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/lib/android-pdfview/build/generated/res/rs/release" />
+        <source path="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/lib/android-pdfview/build/generated/res/generated/release" />
+    </dataSet>
+    <dataSet config="release" >
+        <source path="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/lib/android-pdfview/src/release/res" />
+    </dataSet>
+
+</merger>
