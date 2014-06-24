@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pre-dex-items>
+
+    <item
+        dex="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/app/build/intermediates/pre-dexed/debug/classes-c095e3f7cca51ce51bada4f6b366ad35cfaab8d6.jar"
+        jar="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/build/intermediates/exploded-aar/BischofshofPresenter/android-pdfview/unspecified/classes.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="3bc1e31e8f2749a30c5034a384bc1903c8bfea42"/>
+    <item
+        dex="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/app/build/intermediates/pre-dexed/debug/classes-4fceba6013c3dce9fb20a7254a2952f4b72eef47.jar"
+        jar="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/build/intermediates/exploded-aar/com.android.support/appcompat-v7/19.1.0/classes.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="3499ceba05ca1f6037c6a2fad73df8f636224a28"/>
+    <item
+        dex="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/app/build/intermediates/pre-dexed/debug/support-v4-19.1.0-fe930dc68beb1e566675ce71b270d4091c6c249b.jar"
+        jar="/Applications/Android Studio.app/sdk/extras/android/m2repository/com/android/support/support-v4/19.1.0/support-v4-19.1.0.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67"/>
+
+</pre-dex-items>

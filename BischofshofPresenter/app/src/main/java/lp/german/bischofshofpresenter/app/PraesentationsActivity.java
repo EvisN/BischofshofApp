@@ -103,6 +103,7 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
         pdfView = (PDFView) findViewById(R.id.pdfview);
         pdfView.fromFile(f)
                 .defaultPage(1)
+                .showMinimap(false)
                 .load();
 
         Toast toast = Toast.makeText(getApplicationContext(),"Öffne jetzt File "+f.getAbsolutePath(),Toast.LENGTH_SHORT);
@@ -131,7 +132,9 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
                 break;
             case SimpleGestureFilter.SWIPE_UP :
                 str = "Swipe Up";
+                pdfView.setVisibility(View.INVISIBLE);
                 Intent i = new Intent(this,SlideUpMenu.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 i.putStringArrayListExtra("filePaths", filePaths);
                 startActivityForResult(i,1);
                 break;
@@ -152,6 +155,7 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
                 toast.show();
                 platzHalter = (TextView)findViewById(R.id.presentation);
                 platzHalter.setText(data.getStringExtra("path"));
+                pdfView.setVisibility(View.VISIBLE);
             }
             if (resultCode == RESULT_CANCELED) {
                 //Write your code if there's no result

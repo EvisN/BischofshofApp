@@ -2,10 +2,10 @@
 <merger version="2" >
 
     <dataSet config="main" >
-        <source path="C:\Users\Fabi\Documents\Android Projects\BischofshofApp\BischofshofPresenter\lib\android-pdfview\src\main\assets" />
+        <source path="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/lib/android-pdfview/src/main/assets" />
     </dataSet>
     <dataSet config="debug" >
-        <source path="C:\Users\Fabi\Documents\Android Projects\BischofshofApp\BischofshofPresenter\lib\android-pdfview\src\debug\assets" />
+        <source path="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/lib/android-pdfview/src/debug/assets" />
     </dataSet>
 
 </merger>

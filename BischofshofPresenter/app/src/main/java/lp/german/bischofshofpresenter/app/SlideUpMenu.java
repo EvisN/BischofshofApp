@@ -55,12 +55,12 @@ public class SlideUpMenu extends Activity{
     private void setupScrollViewContent(ArrayList<String> files){
 
         //Die folgende Zeilen auskommentieren bei Test auf echtem Gerät, ist nur ersatzarray zum testen
-        files.add("TestObjekt1.pdf");
+        /*files.add("TestObjekt1.pdf");
         files.add("TestObjekt2.vid");
         files.add("TestObjekt3.pdf");
         files.add("TestObjekt4.vid");
         files.add("TestObjekt5.pdf");
-        files.add("TestObjekt6.vid");
+        files.add("TestObjekt6.vid");*/
 
         for(int i = 0; i<files.size(); i++)
         {
