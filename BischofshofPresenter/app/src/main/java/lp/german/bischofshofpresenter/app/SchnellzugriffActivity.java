@@ -1,20 +1,22 @@
 package lp.german.bischofshofpresenter.app;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
-import android.content.res.TypedArray;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -58,20 +60,12 @@ public class SchnellzugriffActivity extends Activity {
         //Holt den Pfad des Externen Speichers und von dort den Ordner Bischofshof, Hier werden wir dann alle Dateien ablegen lassen
         String path = Environment.getExternalStorageDirectory() + "/Bischofshof/";
 
-        //Speichere alle Files im Hauptordner in ein Array aus Files
-        File dir = new File(path);
-        filesList = dir.listFiles();
-        filePaths = new ArrayList<String>();
-
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
 
-        if(filesList!=null){
-            for (int i = 0; i< filesList.length; i++){
-                filePaths.add(filesList[i].getName());
-            }
-            addItems(filesList);
-        }
+        filesList = FileUtilities.getAllFilesFromPath(path);
+        filePaths = FileUtilities.getAbsolutePathsFromFolder(path);
+        addItems(filesList);
 
     }
 
@@ -119,11 +113,67 @@ public class SchnellzugriffActivity extends Activity {
 
             NavDrawerItem item = (NavDrawerItem)adapter.getItem(position);
 
-            Toast toast = Toast.makeText(getApplicationContext(),item.getAbsolutePath(),Toast.LENGTH_SHORT);
-            toast.show();
+            try {
+                Toast toast = Toast.makeText(getApplicationContext(), item.getAbsolutePath(), Toast.LENGTH_SHORT);
+                toast.show();
+                addItemsToContainer(item.getAbsolutePath());
 
+            }catch (Exception e){
+                Toast toast = Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT);
+                toast.show();
+            }
+            mDrawerLayout.closeDrawers();
             mDrawerList.setItemChecked(position, true);
         }
+    }
+
+    private void addItemsToContainer(String path){
+
+        File[] files = FileUtilities.getAllFilesFromPath(path);
+
+        View linearLayout = findViewById(R.id.container);
+        ViewGroup group = (ViewGroup)linearLayout;
+        group.removeAllViews();
+
+        for(int i = 0; i<files.length; i++)
+        {
+            final File currentFile = files[i];
+            String fileName = currentFile.getName();
+            LayoutInflater vi = (LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View v = vi.inflate(R.layout.file_template, null);
+
+            TextView textView = (TextView)v.findViewById(R.id.file_template_text);
+            textView.setText(fileName.substring(0, 10)+"...");
+
+            ImageView imageView = (ImageView)v.findViewById(R.id.file_template_img);
+
+
+            if(FileUtilities.getFileExtension(fileName).equals("pdf")){
+                imageView.setImageResource(R.drawable.pdf2);
+            }else {
+                imageView.setImageResource(R.drawable.video);
+            }
+
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openFile(currentFile);
+                }
+            });
+
+            linearLayout = findViewById(R.id.container);
+            group.addView(v);
+        }
+    }
+
+    private void openFile(File file){
+        //PDFActivity
+        Toast toast = Toast.makeText(getApplicationContext(),"Open file: "+file.getAbsolutePath(),Toast.LENGTH_SHORT);
+        toast.show();
+        Intent i = new Intent(getApplicationContext(), SimpleFileViewActivity.class);
+        i.putExtra("file", file);
+        startActivity(i);
     }
 
     @Override

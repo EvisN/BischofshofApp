@@ -15,14 +15,18 @@
         <item>Bischofshof</item>
         <item>Weltenburger</item>
     </string-array>
-
     <string-array name="marken_values">
         <item>pref_bischofshof</item>
         <item>pref_weltenburger</item>
     </string-array>
-
     <string-array name="nav_drawer_items">
         <item>PDF1</item>
         <item>PDF2</item>
     </string-array>
+
+    <string name="title_activity_schnellzugriff_dateiansicht">SchnellzugriffDateiansichtActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_simple_pdfview">SimplePDFViewActivity</string>
+
 </resources>

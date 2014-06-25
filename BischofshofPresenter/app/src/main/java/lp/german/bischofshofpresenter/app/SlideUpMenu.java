@@ -97,11 +97,6 @@ public class SlideUpMenu extends Activity{
             });
             ((ViewGroup)fileList).addView(v);
         }
-
     }
-
-
-
-
 }
 

@@ -5,10 +5,12 @@
     android:layout_height="match_parent">
 
     <!-- Framelayout to display Fragments -->
-    <FrameLayout
-        android:id="@+id/frame_container"
+    <LinearLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+    </LinearLayout>
 
     <!-- Listview to display slider menu -->
     <ListView
@@ -21,4 +23,5 @@
         android:dividerHeight="1dp"
         android:listSelector="@drawable/abc_ic_search"
         android:background="@android:color/white"/>
+
 </android.support.v4.widget.DrawerLayout>

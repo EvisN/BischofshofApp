@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="lp.german.bischofshofpresenter.app.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="landscape" >
             <intent-filter>
@@ -26,11 +26,11 @@
             android:label="@string/title_activity_projekt_bearbeiten" >
         </activity>
         <activity
-            android:name="lp.german.bischofshofpresenter.app.EinstellungenActivity"
+            android:name=".EinstellungenActivity"
             android:label="@string/title_activity_einstellungen" >
         </activity>
         <activity
-            android:name="lp.german.bischofshofpresenter.app.PraesentationsActivity"
+            android:name=".PraesentationsActivity"
             android:label="@string/title_activity_praesentations" >
         </activity>
         <activity
@@ -38,13 +38,23 @@
             android:label="@string/title_activity_projekt_liste_aktivity" >
         </activity>
         <activity
-            android:name="lp.german.bischofshofpresenter.app.SlideUpMenu"
+            android:name=".SlideUpMenu"
             android:label="@string/title_activity_slide_up_menu"
-            android:theme="@style/Theme.Transparent">
+            android:theme="@style/Theme.Transparent" >
         </activity>
         <activity
             android:name=".SettingsActivity"
-            android:label="Settings">
+            android:label="Settings" >
+        </activity>
+        <activity
+            android:name=".SchnellzugriffDateiansichtActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_schnellzugriff_dateiansicht"
+            android:theme="@style/FullscreenTheme" >
+        </activity>
+        <activity
+            android:name=".SimpleFileViewActivity"
+            android:label="@string/title_activity_simple_pdfview" >
         </activity>
     </application>
 
