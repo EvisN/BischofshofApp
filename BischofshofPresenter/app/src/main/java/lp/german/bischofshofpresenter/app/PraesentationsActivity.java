@@ -1,21 +1,11 @@
 package lp.german.bischofshofpresenter.app;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.joanzapata.pdfview.PDFView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,13 +14,11 @@ import lp.german.bischofshofpresenter.app.SimpleGestureFilter.SimpleGestureListe
 
 public class PraesentationsActivity extends Activity implements SimpleGestureListener{
 
-
-    private FileUtilities fileUtilities = new FileUtilities();
     private SimpleGestureFilter detector;
     private File[] filesList;
     private ArrayList<String> filePaths;
-    private TextView platzHalter;
-    private PDFView pdfView;
+
+    //Setzt index des aktuellen files auf das erste im Array
     private int mCurrentFile = 0;
 
     public final static int NEXT_FILE_RESULT = 101;
@@ -48,15 +36,10 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
 
         setContentView(R.layout.activity_praesentations);
 
-        //Holt den Pfad des Externen Speichers und von dort den Ordner Bischofshof, Hier werden wir dann alle Dateien ablegen lassen
-        String path = Environment.getExternalStorageDirectory() + "/Bischofshof/Biere";
-
-        //Speichere alle Files im Hauptordner in ein Array aus Files
-        File dir = new File(path);
+        //Hole die Dateien aus dem Präsentationsordner in ein Array aus Files und die absoluten Pfade
+        File dir = new File(FileUtilities.PFAD_PRAESENTATION);
         filesList = dir.listFiles();
         filePaths = new ArrayList<String>();
-
-        pdfView = (PDFView) findViewById(R.id.pdfview);
 
         startFile();
 
@@ -68,29 +51,16 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
 
     }
 
-
-    //Diese Methode wird bei Click auf ein File im Menu aufgerufen und soll später dann dieses File in der Präsentation starten
-    private void openFile(File f){
-
-
-        /*
-        pdfView.fromFile(f)
-                .defaultPage(1)
-                .showMinimap(false)
-                .load();
-
-        Toast toast = Toast.makeText(getApplicationContext(),"Öffne jetzt File "+f.getAbsolutePath(),Toast.LENGTH_SHORT);
-        toast.show();*/
-    }
-
     @Override
     public boolean dispatchTouchEvent(MotionEvent me){
 
         this.detector.onTouchEvent(me);
         return super.dispatchTouchEvent(me);
     }
+
     @Override
     public void onSwipe(int direction) {
+        /* Swipemenü wird noch in die Anzeigeactivity verschoben
         String str = "";
 
         switch (direction) {
@@ -111,13 +81,15 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
                 break;
         }
         Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+        */
     }
 
     @Override
     public void onDoubleTap() {
-        Toast.makeText(this, "Double Tap", Toast.LENGTH_SHORT).show();
+        //momentan unnötig
     }
 
+    //Checkt ob ein weiter oder zurück Button
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         switch (requestCode){
@@ -128,7 +100,7 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
                         startFile();
                         break;
                     case PREVIOUS_FILE:
-                        mCurrentFile -=1;
+                        mCurrentFile -= 1;
                         startFile();
                         break;
                     default:
@@ -136,6 +108,7 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
                         break;
                 }
                 break;
+            /* Gehört auch zum Swipemenü
             case 1 :
                 if(resultCode == RESULT_OK){
                     Toast toast = Toast.makeText(this,"Result: "+data.getStringExtra("path"),Toast.LENGTH_SHORT);
@@ -147,11 +120,13 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
                     //Write your code if there's no result
                 }
                 break;
+                */
             default:
                 break;
         }
     }
 
+    //Started die Anzeigeactivity und gibt parameter mit ob es vorher oder nachher auch noch ein file gibt
     private void startFile(){
 
             Intent i = new Intent(getApplicationContext(),SimpleFileViewActivity.class);
@@ -163,6 +138,5 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
             }
             i.putExtra("file", filesList[mCurrentFile]);
             startActivityForResult(i,NEXT_FILE_RESULT);
-
     }
 }

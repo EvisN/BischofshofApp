@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -36,14 +35,9 @@ public class SchnellzugriffActivity extends Activity {
     private View mLinearLayout;
     private ImageView mFrame;
 
-    // nav drawer title
     private CharSequence mDrawerTitle;
 
-    // used to store app title
     private CharSequence mTitle;
-
-    // slide menu items
-    private String[] navMenuTitles;
 
     private ArrayList<NavDrawerItem> navDrawerItems;
     private NavDrawerListAdapter adapter;
@@ -65,6 +59,7 @@ public class SchnellzugriffActivity extends Activity {
         mFrame = (ImageView)findViewById(R.id.frame_screen);
         mLinearLayout = findViewById(R.id.container);
 
+        //Design prüfen
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         mMarke = sharedPref.getString(SettingsActivity.KEY_PREF_MARKE, "");
 
@@ -77,16 +72,9 @@ public class SchnellzugriffActivity extends Activity {
             mLinearLayout.setBackgroundColor(getResources().getColor(android.R.color.white));
         }
 
-        // load slide menu items
-        navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
-
-        //Holt den Pfad des Externen Speichers und von dort den Ordner Bischofshof, Hier werden wir dann alle Dateien ablegen lassen
-        String path = Environment.getExternalStorageDirectory() + "/Bischofshof/";
-
-
-
-        filesList = FileUtilities.getAllFilesFromPath(path);
-        filePaths = FileUtilities.getAbsolutePathsFromFolder(path);
+        //Listview im Drawer mit den Ordnern Populaten
+        filesList = FileUtilities.getAllFilesFromPath(FileUtilities.PFAD_ROOT);
+        filePaths = FileUtilities.getAbsolutePathsFromFolder(FileUtilities.PFAD_ROOT);
         addItems(filesList);
 
     }
@@ -99,23 +87,23 @@ public class SchnellzugriffActivity extends Activity {
         for(int i = 0; i<files.length; i++){
 
             mCount = FileUtilities.getNumberOfFilesFromPath(files[i].getAbsolutePath());
-            if(!files[i].getName().equals("Projekte")) {
+
+            //Ausschluss vom Projekt und Präsentationsordner und Dateien
+            if(!files[i].getName().equals("Projekte")&&!files[i].getName().equals("tempCurrent")&&files[i].isDirectory()) {
                 if(mCount==0){
                     navDrawerItems.add(new NavDrawerItem(filePaths.get(i), files[i].getAbsolutePath()));
                 }else{
                     navDrawerItems.add(new NavDrawerItem(filePaths.get(i), files[i].getAbsolutePath(), true, String.valueOf(mCount)));
                 }
-
             }
         }
 
-        // setting the nav drawer list adapter
+        //ListAdapter setzen
         adapter = new NavDrawerListAdapter(getApplicationContext(),
                 navDrawerItems, mMarke);
         mDrawerList.setAdapter(adapter);
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
-        // enabling action bar app icon and behaving it as toggle button
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
@@ -162,6 +150,7 @@ public class SchnellzugriffActivity extends Activity {
         }
     }
 
+    //Hinzufügen der Dateien zum Auswahlfenster
     private void addItemsToContainer(String path){
 
         File[] files = FileUtilities.getAllFilesFromPath(path);
@@ -201,6 +190,7 @@ public class SchnellzugriffActivity extends Activity {
         }
     }
 
+    //Öffnet ein File auf Click
     private void openFile(File file){
         //PDFActivity
         Toast toast = Toast.makeText(getApplicationContext(),"Open file: "+file.getAbsolutePath(),Toast.LENGTH_SHORT);

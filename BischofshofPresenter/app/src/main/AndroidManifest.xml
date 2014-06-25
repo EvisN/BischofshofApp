@@ -57,6 +57,9 @@
             android:name=".SimpleFileViewActivity"
             android:label="@string/title_activity_simple_pdfview" >
         </activity>
-    </application>
 
+
+    </application>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 </manifest>

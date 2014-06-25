@@ -1,5 +1,9 @@
 package lp.german.bischofshofpresenter.app;
 
+/**
+ * Filtert Swipegesten, wichtig für das Swipemenü von unten
+ */
+
 import android.app.Activity;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;

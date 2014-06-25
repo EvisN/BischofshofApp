@@ -7,7 +7,10 @@ import android.view.ViewGroup;
 
 /**
  * Created by paullichtenberger on 25.06.14.
+ *
+ * Sorgt bei der Auflistung der Dateien für einen Zeilenumbruch im Linearlayout
  */
+
 public class UmbruchLayout extends ViewGroup{
     private int line_height;
 
@@ -25,7 +28,6 @@ public class UmbruchLayout extends ViewGroup{
 
         final int width = View.MeasureSpec.getSize(widthMeasureSpec);
 
-        // The next line is WRONG!!! Doesn't take into account requested MeasureSpec mode!
         int height = View.MeasureSpec.getSize(heightMeasureSpec) - getPaddingTop() - getPaddingBottom();
         final int count = getChildCount();
         int line_height = 0;
@@ -36,7 +38,7 @@ public class UmbruchLayout extends ViewGroup{
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child.getVisibility() != GONE) {
-                final ViewGroup.LayoutParams lp = (ViewGroup.LayoutParams) child.getLayoutParams();
+                final ViewGroup.LayoutParams lp = child.getLayoutParams();
                 child.measure(
                         View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.AT_MOST),
                         View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.UNSPECIFIED));
@@ -87,7 +89,7 @@ public class UmbruchLayout extends ViewGroup{
             if (child.getVisibility() != GONE) {
                 final int childw = child.getMeasuredWidth();
                 final int childh = child.getMeasuredHeight();
-                final ViewGroup.LayoutParams lp = (ViewGroup.LayoutParams) child.getLayoutParams();
+                final ViewGroup.LayoutParams lp = child.getLayoutParams();
                 if (xpos + childw > width) {
                     xpos = getPaddingLeft();
                     ypos += line_height;

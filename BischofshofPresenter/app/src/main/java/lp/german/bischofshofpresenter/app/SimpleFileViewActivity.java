@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +25,7 @@ public class SimpleFileViewActivity extends Activity {
     private ImageView mNextFile, mPreviousFile;
     private PDFView pdfView;
     private ProgressDialog dialog;
+    private File file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +35,41 @@ public class SimpleFileViewActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_simple_fileview);
 
+        setupUI();
 
+        checkIfNextPreviousFileExists();
 
-        File file = (File)getIntent().getExtras().get("file");
+        startFile();
+
+    }
+
+    private void startFile() {
+        if(FileUtilities.getFileExtension(file.getName()).equals("pdf")) {
+
+            new loadPDFTask(this).execute(file);
+
+        }else{
+            try{
+                VideoView mVideoView = (VideoView)findViewById(R.id.videoview);
+                mVideoView.setVisibility(View.VISIBLE);
+                Uri uri = Uri.parse(file.getAbsolutePath());
+                mVideoView.setVideoURI(uri);
+                mVideoView.requestFocus();
+                mVideoView.start();
+            }catch (Exception e){
+                Log.e("Fehler", "Video konnte nicht geladen werden");
+            }
+        }
+    }
+
+    private void setupUI() {
+        file = (File)getIntent().getExtras().get("file");
         mNextFile = (ImageView)findViewById(R.id.next_file);
         mPreviousFile = (ImageView)findViewById(R.id.previous_file);
         pdfView = (PDFView) findViewById(R.id.pdfview);
+    }
 
+    private void checkIfNextPreviousFileExists() {
         if(getIntent().getBooleanExtra("hasNextFile", false)){
             mNextFile.setVisibility(View.VISIBLE);
             mNextFile.setOnClickListener(new View.OnClickListener() {
@@ -63,29 +93,9 @@ public class SimpleFileViewActivity extends Activity {
                 }
             });
         }
-
-
-
-
-        if(FileUtilities.getFileExtension(file.getName()).equals("pdf")) {
-
-            new loadPDFTask(this).execute(file);
-
-        }else{
-            try{
-                VideoView mVideoView = (VideoView)findViewById(R.id.videoview);
-                mVideoView.setVisibility(View.VISIBLE);
-                Uri uri = Uri.parse(file.getAbsolutePath());
-                mVideoView.setVideoURI(uri);
-                mVideoView.requestFocus();
-                mVideoView.start();
-            }catch (Exception e){
-
-            }
-        }
-
     }
 
+    //lädt PDF asynchron und zeigt ProgressDialog an
     private class loadPDFTask extends AsyncTask<Object,String,File> {
 
         private Context context;

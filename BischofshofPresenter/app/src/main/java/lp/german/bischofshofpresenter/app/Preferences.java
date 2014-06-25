@@ -7,6 +7,7 @@ import android.preference.PreferenceFragment;
 /**
  * Created by paullichtenberger on 11.06.14.
  */
+
 public class Preferences extends PreferenceFragment {
 
     @Override

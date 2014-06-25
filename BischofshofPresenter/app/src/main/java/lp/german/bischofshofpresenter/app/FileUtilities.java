@@ -1,25 +1,42 @@
 package lp.german.bischofshofpresenter.app;
 
+import android.os.Environment;
+import android.util.Log;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 /**
  * Created by paullichtenberger on 28.05.14.
+ *
+ * Zuständig für alle Dateioperationen
+ *
  */
 public class FileUtilities {
 
-    public static String getFileExtension(String fileName){
+    public static String PFAD_ROOT = Environment.getExternalStorageDirectory() + "/Bischofshof/";
+    public static String PFAD_PROJEKTE = Environment.getExternalStorageDirectory() + "/Bischofshof/Projekte";
+    public static String PFAD_PRAESENTATION = Environment.getExternalStorageDirectory() + "/Bischofshof/tempCurrent";
+
+    //Gibt Dateiendung zurück
+    public static String getFileExtension(String fileName) {
         String filenameArray[] = fileName.split("\\.");
-        return filenameArray[filenameArray.length-1];
+        return filenameArray[filenameArray.length - 1];
     }
 
-    public static ArrayList<String> getAbsolutePathsFromFolder(String path){
+    //Gibt Absolute Pfade aller Dateien in Ordner zurück
+    public static ArrayList<String> getAbsolutePathsFromFolder(String path) {
         File[] filesList = getAllFilesFromPath(path);
 
         ArrayList<String> filePaths = new ArrayList<String>();
 
-        if(filesList!=null){
-            for (int i = 0; i< filesList.length; i++){
+        if (filesList != null) {
+            for (int i = 0; i < filesList.length; i++) {
                 filePaths.add(filesList[i].getName());
             }
         }
@@ -27,14 +44,83 @@ public class FileUtilities {
         return filePaths;
     }
 
-    public static File[] getAllFilesFromPath(String path){
+    //Gibt alle Files von einem Pfad zurück
+    public static File[] getAllFilesFromPath(String path) {
         File dir = new File(path);
         return dir.listFiles();
     }
 
-    public static int getNumberOfFilesFromPath(String path){
+    //Gibt Anzahl der Dateien unter bestimmten Pfad zurück
+    public static int getNumberOfFilesFromPath(String path) {
         File dir = new File(path);
         return dir.listFiles().length;
     }
 
+    //Löscht den temporären Ordner der aktuellen Präsentation
+    public static void emptyTempFolder() {
+        File directory = new File(PFAD_PRAESENTATION);
+
+        File[] files = directory.listFiles();
+        for (File file : files) {
+            File fileToDelete = new File(file.getAbsolutePath());
+            if (!fileToDelete.delete()) {
+                Log.e("Fehler", "Datei konnte nicht gelöscht werden");
+            }
+        }
+    }
+
+    //Fügt anhand der gewählten Präsentationen die Dateien dem temporären Ordner hinzu
+    public static void addFilesToPresentationTemp(ArrayList<String> paths) {
+
+        for (String path : paths) {
+            File directory = new File(path);
+
+            File[] files = directory.listFiles();
+
+            for (File file : files) {
+                copyFilesFromPathToPath(new File(file.getAbsolutePath()), new File(PFAD_PRAESENTATION + "/"+ file.getName()));
+            }
+
+        }
+    }
+
+    //Kopiert Datei von x nach y
+    public static void copyFilesFromPathToPath(File sourceLocation, File targetLocation) {
+        Log.d("COPY", "FROM "+ sourceLocation.getAbsolutePath() + "TO " + targetLocation.getAbsolutePath());
+        try {
+
+            if (sourceLocation.isDirectory()) {
+                if (!targetLocation.exists() && !targetLocation.mkdirs()) {
+                    throw new IOException("Cannot create dir " + targetLocation.getAbsolutePath());
+                }
+
+                String[] children = sourceLocation.list();
+                for (int i = 0; i < children.length; i++) {
+                    copyFilesFromPathToPath(new File(sourceLocation, children[i]),
+                            new File(targetLocation, children[i]));
+                }
+            } else {
+
+                //Prüft ob Ordner vorhanden
+                File directory = targetLocation.getParentFile();
+                if (directory != null && !directory.exists() && !directory.mkdirs()) {
+                    throw new IOException("Cannot create dir " + directory.getAbsolutePath());
+                }
+
+                InputStream in = new FileInputStream(sourceLocation);
+                OutputStream out = new FileOutputStream(targetLocation);
+
+                //Kopiert Byteweiße die Dateien
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                in.close();
+                out.close();
+            }
+        } catch (IOException e) {
+            Log.e("Fehler",e.getMessage());
+        }
+    }
 }

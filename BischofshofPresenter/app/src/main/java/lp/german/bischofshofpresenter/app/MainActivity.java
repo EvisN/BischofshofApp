@@ -2,18 +2,29 @@ package lp.german.bischofshofpresenter.app;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
+import java.util.ArrayList;
 
 public class MainActivity extends Activity {
 
     private ImageView btnStartPresentation, imgLogo, btnEinstellungen, btnNeuePraesentation, btnGespeichertePraesentationen, btnSchnellzugriff, backgroundStartPresentation;
+    public static final int PROJEKTE_BEARBEITET = 105;
+    private ArrayList<String> gewaehlteProjekte;
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +33,6 @@ public class MainActivity extends Activity {
 
         setupUIElements();
         addUIClickListeners();
-
     }
 
     private void setupUIElements(){
@@ -78,11 +88,66 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(),GespeichertePraesentationenActivity.class);
-                startActivity(i);
+                startActivityForResult(i, PROJEKTE_BEARBEITET);
             }
         });
     }
 
+    //Wird aufgerufen wenn die aktuelle Präsentation geändert wurde
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        switch (requestCode){
+            case PROJEKTE_BEARBEITET:
+                gewaehlteProjekte = (ArrayList<String>)data.getExtras().get("chosenProjects");
+                //Startbutton sperren solang nicht alles kopiert ist
+                btnStartPresentation.setOnClickListener(null);
+                //Aktualisieren von tempCurrent
+                new updatePresentationFolder(this).execute();
+                break;
+            default:
+                break;
+        }
+    }
+
+    //Aktualisieren von tempCurrent, erst löschen des Ordners und dann kopieren der gewählten Projekte
+    private class updatePresentationFolder extends AsyncTask<String, Void, String>{
+        private Context context;
+
+        public updatePresentationFolder(Context ctx){
+            context = ctx;
+            dialog = new ProgressDialog(context);
+            dialog.setMessage("Updating Current Presentation...");
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.show();
+        }
+        @Override
+        protected String doInBackground(String... args) {
+            FileUtilities.emptyTempFolder();
+            FileUtilities.addFilesToPresentationTemp(gewaehlteProjekte);
+            return "";
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if(dialog!=null) {
+                dialog.dismiss();
+                btnStartPresentation.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(getApplicationContext(), PraesentationsActivity.class);
+                        startActivity(i);
+                        overridePendingTransition(R.anim.zoom_in,R.anim.zoom_out);
+                    }
+                });
+            }
+        }
+    }
+
+    //On Resume immer prüfen ob die Einstellungen wegem dem Design geändert wurden
     @Override
     protected void onResume(){
         super.onResume();
