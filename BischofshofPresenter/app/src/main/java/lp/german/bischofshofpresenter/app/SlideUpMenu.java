@@ -73,7 +73,11 @@ public class SlideUpMenu extends Activity{
             View v = vi.inflate(R.layout.file_template, null);
 
             TextView textView = (TextView)v.findViewById(R.id.file_template_text);
-            textView.setText(fileName.substring(0, 10)+"...");
+            if(fileName.length()>10) {
+                textView.setText(fileName.substring(0, 10) + "...");
+            }else {
+                textView.setText(fileName);
+            }
 
             ImageView imageView = (ImageView)v.findViewById(R.id.file_template_img);
 

@@ -3,9 +3,11 @@ package lp.german.bischofshofpresenter.app;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
@@ -31,6 +33,8 @@ public class SchnellzugriffActivity extends Activity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
+    private View mLinearLayout;
+    private ImageView mFrame;
 
     // nav drawer title
     private CharSequence mDrawerTitle;
@@ -47,12 +51,31 @@ public class SchnellzugriffActivity extends Activity {
     private File[] filesList;
     private ArrayList<String> filePaths;
 
+    private String mMarke;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_projekt_liste);
 
-        mTitle = mDrawerTitle = getTitle();
+        mTitle = mDrawerTitle = "<< Bitte Ordner wählen";
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
+        mFrame = (ImageView)findViewById(R.id.frame_screen);
+        mLinearLayout = findViewById(R.id.container);
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        mMarke = sharedPref.getString(SettingsActivity.KEY_PREF_MARKE, "");
+
+        if(mMarke.equals("pref_bischofshof")){
+            mFrame.setImageResource(R.drawable.frame_screen);
+            mLinearLayout.setBackgroundResource(R.drawable.skyline);
+        }else{
+
+            mFrame.setImageResource(R.drawable.frame_screen_wb);
+            mLinearLayout.setBackgroundColor(getResources().getColor(android.R.color.white));
+        }
 
         // load slide menu items
         navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items);
@@ -60,8 +83,7 @@ public class SchnellzugriffActivity extends Activity {
         //Holt den Pfad des Externen Speichers und von dort den Ordner Bischofshof, Hier werden wir dann alle Dateien ablegen lassen
         String path = Environment.getExternalStorageDirectory() + "/Bischofshof/";
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
+
 
         filesList = FileUtilities.getAllFilesFromPath(path);
         filePaths = FileUtilities.getAbsolutePathsFromFolder(path);
@@ -69,16 +91,27 @@ public class SchnellzugriffActivity extends Activity {
 
     }
 
+
     private void addItems(File[] files){
         navDrawerItems = new ArrayList<NavDrawerItem>();
 
+        int mCount = 0;
         for(int i = 0; i<files.length; i++){
-            navDrawerItems.add(new NavDrawerItem(filePaths.get(i), files[i].getAbsolutePath()));
+
+            mCount = FileUtilities.getNumberOfFilesFromPath(files[i].getAbsolutePath());
+            if(!files[i].getName().equals("Projekte")) {
+                if(mCount==0){
+                    navDrawerItems.add(new NavDrawerItem(filePaths.get(i), files[i].getAbsolutePath()));
+                }else{
+                    navDrawerItems.add(new NavDrawerItem(filePaths.get(i), files[i].getAbsolutePath(), true, String.valueOf(mCount)));
+                }
+
+            }
         }
 
         // setting the nav drawer list adapter
         adapter = new NavDrawerListAdapter(getApplicationContext(),
-                navDrawerItems);
+                navDrawerItems, mMarke);
         mDrawerList.setAdapter(adapter);
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
@@ -87,7 +120,7 @@ public class SchnellzugriffActivity extends Activity {
         getActionBar().setHomeButtonEnabled(true);
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.drawable.abc_ic_search, //nav menu toggle icon
+                R.drawable.ic_browse, //nav menu toggle icon
                 R.string.app_name, // nav drawer open - description for accessibility
                 R.string.app_name // nav drawer close - description for accessibility
         ){
@@ -113,6 +146,8 @@ public class SchnellzugriffActivity extends Activity {
 
             NavDrawerItem item = (NavDrawerItem)adapter.getItem(position);
 
+            mTitle = item.getTitle();
+
             try {
                 Toast toast = Toast.makeText(getApplicationContext(), item.getAbsolutePath(), Toast.LENGTH_SHORT);
                 toast.show();
@@ -131,8 +166,7 @@ public class SchnellzugriffActivity extends Activity {
 
         File[] files = FileUtilities.getAllFilesFromPath(path);
 
-        View linearLayout = findViewById(R.id.container);
-        ViewGroup group = (ViewGroup)linearLayout;
+        ViewGroup group = (ViewGroup) mLinearLayout;
         group.removeAllViews();
 
         for(int i = 0; i<files.length; i++)
@@ -162,7 +196,7 @@ public class SchnellzugriffActivity extends Activity {
                 }
             });
 
-            linearLayout = findViewById(R.id.container);
+            mLinearLayout = findViewById(R.id.container);
             group.addView(v);
         }
     }

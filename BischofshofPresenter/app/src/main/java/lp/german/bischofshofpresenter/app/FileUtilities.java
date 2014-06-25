@@ -32,4 +32,9 @@ public class FileUtilities {
         return dir.listFiles();
     }
 
+    public static int getNumberOfFilesFromPath(String path){
+        File dir = new File(path);
+        return dir.listFiles().length;
+    }
+
 }

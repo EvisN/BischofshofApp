@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -20,10 +21,12 @@ public class NavDrawerListAdapter extends BaseAdapter{
 
     private Context context;
     private ArrayList<NavDrawerItem> navDrawerItems;
+    private String mMarke;
 
-    public NavDrawerListAdapter(Context context, ArrayList<NavDrawerItem> navDrawerItems){
+    public NavDrawerListAdapter(Context context, ArrayList<NavDrawerItem> navDrawerItems, String marke){
         this.context = context;
         this.navDrawerItems = navDrawerItems;
+        this.mMarke = marke;
     }
 
     @Override
@@ -51,7 +54,15 @@ public class NavDrawerListAdapter extends BaseAdapter{
 
         TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
         TextView txtCount = (TextView) convertView.findViewById(R.id.counter);
+        ImageView imageView = (ImageView) convertView.findViewById(R.id.btn_frame);
 
+        if(mMarke.equals("pref_bischofshof")){
+            imageView.setImageResource(R.drawable.btn_frame);
+        }else{
+            imageView.setImageResource(R.drawable.btn_frame_wb);
+        }
+
+        //txtCount.setText("5");
         txtTitle.setText(navDrawerItems.get(position).getTitle());
 
         // displaying count

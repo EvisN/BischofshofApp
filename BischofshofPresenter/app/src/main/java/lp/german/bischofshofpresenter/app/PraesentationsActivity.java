@@ -31,6 +31,11 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
     private ArrayList<String> filePaths;
     private TextView platzHalter;
     private PDFView pdfView;
+    private int mCurrentFile = 0;
+
+    public final static int NEXT_FILE_RESULT = 101;
+    public final static int NEXT_FILE = 102;
+    public final static int PREVIOUS_FILE = 103;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +49,7 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
         setContentView(R.layout.activity_praesentations);
 
         //Holt den Pfad des Externen Speichers und von dort den Ordner Bischofshof, Hier werden wir dann alle Dateien ablegen lassen
-        String path = Environment.getExternalStorageDirectory() + "/Bischofshof/";
+        String path = Environment.getExternalStorageDirectory() + "/Bischofshof/Biere";
 
         //Speichere alle Files im Hauptordner in ein Array aus Files
         File dir = new File(path);
@@ -53,63 +58,29 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
 
         pdfView = (PDFView) findViewById(R.id.pdfview);
 
+        startFile();
 
         if(filesList!=null){
             for (int i = 0; i< filesList.length; i++){
                 filePaths.add(filesList[i].getAbsolutePath());
             }
-            setupScrollViewContent(filesList);
         }
 
     }
 
-    private void setupScrollViewContent(final File[] files){
-
-
-        for(int i = 0; i<files.length; i++)
-        {
-            final File currentFile = files[i];
-            String fileName = currentFile.getName();
-            LayoutInflater vi = (LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View v = vi.inflate(R.layout.file_template, null);
-
-            TextView textView = (TextView)v.findViewById(R.id.file_template_text);
-            textView.setText(fileName.substring(0, 10)+"...");
-
-            ImageView imageView = (ImageView)v.findViewById(R.id.file_template_img);
-
-
-            if(fileUtilities.getFileExtension(fileName).equals("pdf")){
-                imageView.setImageResource(R.drawable.pdf2);
-            }else {
-                imageView.setImageResource(R.drawable.video);
-            }
-
-
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openFile(currentFile);
-                }
-            });
-
-            View relativeLayout = findViewById(R.id.scroll_view_relative_layout);
-            ((ViewGroup)relativeLayout).addView(v);
-        }
-
-    }
 
     //Diese Methode wird bei Click auf ein File im Menu aufgerufen und soll später dann dieses File in der Präsentation starten
     private void openFile(File f){
 
 
+        /*
         pdfView.fromFile(f)
                 .defaultPage(1)
                 .showMinimap(false)
                 .load();
 
         Toast toast = Toast.makeText(getApplicationContext(),"Öffne jetzt File "+f.getAbsolutePath(),Toast.LENGTH_SHORT);
-        toast.show();
+        toast.show();*/
     }
 
     @Override
@@ -149,16 +120,49 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == 1) {
-            if(resultCode == RESULT_OK){
-                Toast toast = Toast.makeText(this,"Result: "+data.getStringExtra("path"),Toast.LENGTH_SHORT);
-                toast.show();
-                platzHalter = (TextView)findViewById(R.id.presentation);
-                platzHalter.setText(data.getStringExtra("path"));
-            }
-            if (resultCode == RESULT_CANCELED) {
-                //Write your code if there's no result
-            }
+        switch (requestCode){
+            case NEXT_FILE_RESULT:
+                switch (resultCode){
+                    case NEXT_FILE:
+                        mCurrentFile += 1;
+                        startFile();
+                        break;
+                    case PREVIOUS_FILE:
+                        mCurrentFile -=1;
+                        startFile();
+                        break;
+                    default:
+                        finish();
+                        break;
+                }
+                break;
+            case 1 :
+                if(resultCode == RESULT_OK){
+                    Toast toast = Toast.makeText(this,"Result: "+data.getStringExtra("path"),Toast.LENGTH_SHORT);
+                    toast.show();
+                    platzHalter = (TextView)findViewById(R.id.presentation);
+                    platzHalter.setText(data.getStringExtra("path"));
+                }
+                if (resultCode == RESULT_CANCELED) {
+                    //Write your code if there's no result
+                }
+                break;
+            default:
+                break;
         }
+    }
+
+    private void startFile(){
+
+            Intent i = new Intent(getApplicationContext(),SimpleFileViewActivity.class);
+            if(mCurrentFile<filesList.length-1) {
+                i.putExtra("hasNextFile", true);
+            }
+            if(mCurrentFile>0) {
+                i.putExtra("hasPreviousFile",true);
+            }
+            i.putExtra("file", filesList[mCurrentFile]);
+            startActivityForResult(i,NEXT_FILE_RESULT);
+
     }
 }

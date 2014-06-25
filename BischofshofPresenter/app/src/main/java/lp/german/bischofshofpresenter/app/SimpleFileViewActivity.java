@@ -1,13 +1,18 @@
 package lp.german.bischofshofpresenter.app;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.VideoView;
 
 import com.joanzapata.pdfview.PDFView;
@@ -15,6 +20,10 @@ import com.joanzapata.pdfview.PDFView;
 import java.io.File;
 
 public class SimpleFileViewActivity extends Activity {
+
+    private ImageView mNextFile, mPreviousFile;
+    private PDFView pdfView;
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,16 +33,44 @@ public class SimpleFileViewActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_simple_fileview);
 
+
+
         File file = (File)getIntent().getExtras().get("file");
+        mNextFile = (ImageView)findViewById(R.id.next_file);
+        mPreviousFile = (ImageView)findViewById(R.id.previous_file);
+        pdfView = (PDFView) findViewById(R.id.pdfview);
+
+        if(getIntent().getBooleanExtra("hasNextFile", false)){
+            mNextFile.setVisibility(View.VISIBLE);
+            mNextFile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent returnIntent = new Intent();
+                    setResult(PraesentationsActivity.NEXT_FILE,returnIntent);
+                    finish();
+                }
+            });
+        }
+
+        if(getIntent().getBooleanExtra("hasPreviousFile", false)){
+            mPreviousFile.setVisibility(View.VISIBLE);
+            mPreviousFile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent returnIntent = new Intent();
+                    setResult(PraesentationsActivity.PREVIOUS_FILE,returnIntent);
+                    finish();
+                }
+            });
+        }
+
+
+
 
         if(FileUtilities.getFileExtension(file.getName()).equals("pdf")) {
-            PDFView pdfView = (PDFView) findViewById(R.id.pdfview);
 
-            pdfView.fromFile(file)
-                    .defaultPage(1)
-                    .showMinimap(false)
-                    .enableSwipe(true)
-                    .load();
+            new loadPDFTask(this).execute(file);
+
         }else{
             try{
                 VideoView mVideoView = (VideoView)findViewById(R.id.videoview);
@@ -49,6 +86,48 @@ public class SimpleFileViewActivity extends Activity {
 
     }
 
+    private class loadPDFTask extends AsyncTask<Object,String,File> {
+
+        private Context context;
+
+
+        public loadPDFTask(Context ctx){
+            context = ctx;
+            dialog = new ProgressDialog(context);
+            dialog.setMessage("Loading PDF...");
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.show();
+        }
+        @Override
+        protected File doInBackground(Object... args) {
+            File file = (File)args[0];
+            pdfView.fromFile(file)
+                    .defaultPage(1)
+                    .showMinimap(false)
+                    .enableSwipe(true)
+                    .load();
+            return file;
+        }
+        @Override
+        protected void onPostExecute(File unused) {
+            super.onPostExecute(unused);
+            if(dialog!=null) {
+                dialog.dismiss();
+            }
+        }
+    }
+
+    @Override
+    public void onPause(){
+
+        super.onPause();
+        if(dialog != null)
+            dialog.dismiss();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

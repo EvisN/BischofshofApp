@@ -18,10 +18,11 @@ public class NavDrawerItem {
         this.title = title;
     }
 
-    public NavDrawerItem(String title,  boolean isCounterVisible, String count){
+    public NavDrawerItem(String title,  String absolutePath, boolean isCounterVisible, String count){
         this.title = title;
         this.isCounterVisible = isCounterVisible;
         this.count = count;
+        this.absolutePath = absolutePath;
     }
 
     public String getTitle(){
