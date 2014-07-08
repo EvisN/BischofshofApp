@@ -11,12 +11,14 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +29,7 @@ import lp.german.slidingmenu.adapter.NavDrawerListAdapter;
 import lp.german.slidingmenu.model.NavDrawerItem;
 
 
-public class SchnellzugriffActivity extends Activity {
+public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenuItemClickListener {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -43,6 +45,7 @@ public class SchnellzugriffActivity extends Activity {
     private NavDrawerListAdapter adapter;
 
     private File[] filesList;
+    private File clickedFile;
     private ArrayList<String> filePaths;
 
     private String mMarke;
@@ -76,6 +79,8 @@ public class SchnellzugriffActivity extends Activity {
         filesList = FileUtilities.getAllFilesFromPath(FileUtilities.PFAD_ROOT);
         filePaths = FileUtilities.getAbsolutePathsFromFolder(FileUtilities.PFAD_ROOT);
         addItems(filesList);
+
+        addItemsToContainer(FileUtilities.PFAD_ROOT);
 
     }
 
@@ -174,19 +179,49 @@ public class SchnellzugriffActivity extends Activity {
             if(FileUtilities.getFileExtension(fileName).equals("pdf")){
                 imageView.setImageResource(R.drawable.pdf2);
             }else {
-                imageView.setImageResource(R.drawable.video);
+                if (!files[i].isDirectory()){
+                    imageView.setImageResource(R.drawable.video);
+                }else{
+                    //Folder icon
+                }
             }
-
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openFile(currentFile);
+                    if(!currentFile.isDirectory()) {
+                        clickedFile = currentFile;
+                        showPopup(v);
+                    }else {
+                        addItemsToContainer(currentFile.getAbsolutePath());
+                    }
                 }
             });
 
             mLinearLayout = findViewById(R.id.container);
             group.addView(v);
+        }
+    }
+
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        popup.setOnMenuItemClickListener(this);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.context_menu, popup.getMenu());
+        popup.show();
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.open:
+                openFile(clickedFile);
+                return true;
+            case R.id.mail:
+                //TODO Mailversenden
+                return true;
+            default:
+                return false;
         }
     }
 

@@ -7,17 +7,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import com.joanzapata.pdfview.PDFView;
 
 public class MainActivity extends Activity {
 
@@ -25,6 +30,8 @@ public class MainActivity extends Activity {
     public static final int PROJEKTE_BEARBEITET = 105;
     private ArrayList<String> gewaehlteProjekte;
     private ProgressDialog dialog;
+    private PDFView pdfView;
+    private VideoView videoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +40,7 @@ public class MainActivity extends Activity {
 
         setupUIElements();
         addUIClickListeners();
+        setPreview();
     }
 
     private void setupUIElements(){
@@ -46,6 +54,9 @@ public class MainActivity extends Activity {
         btnNeuePraesentation = (ImageView)findViewById(R.id.btn_new_presentation);
         btnGespeichertePraesentationen = (ImageView)findViewById(R.id.btn_saved_presentations);
         btnSchnellzugriff = (ImageView)findViewById(R.id.btn_schnellzugriff);
+
+        pdfView = (PDFView)findViewById(R.id.pdf_view);
+        videoView = (VideoView)findViewById(R.id.videoview);
     }
 
     private void addUIClickListeners(){
@@ -159,6 +170,8 @@ public class MainActivity extends Activity {
         }else{
             setLayoutWeltenburger();
         }
+
+        setPreview();
     }
 
     private void setLayoutBischofshof(){
@@ -179,5 +192,35 @@ public class MainActivity extends Activity {
         btnGespeichertePraesentationen.setImageResource(R.drawable.btn_gespeicherte_praesentationen_wb_selector);
         btnEinstellungen.setImageResource(R.drawable.btn_einstellungen_selector_wb);
         backgroundStartPresentation.setBackgroundColor(Color.WHITE);
+    }
+
+    private void setPreview(){
+        try {
+            File directory = new File(gewaehlteProjekte.get(0));
+
+            File[] files = directory.listFiles();
+            File firstFile = files[0];
+
+            if (FileUtilities.getFileExtension(firstFile.getName()).equals("pdf")) {
+                videoView.setVisibility(View.GONE);
+                pdfView.setVisibility(View.VISIBLE);
+                pdfView.fromFile(firstFile).pages(0).load();
+            } else {
+                pdfView.setVisibility(View.VISIBLE);
+                videoView.setVisibility(View.GONE);
+                try {
+                    VideoView mVideoView = (VideoView) findViewById(R.id.videoview);
+                    mVideoView.setVisibility(View.VISIBLE);
+                    Uri uri = Uri.parse(firstFile.getAbsolutePath());
+                    mVideoView.setVideoURI(uri);
+                    mVideoView.requestFocus();
+                    mVideoView.start();
+                } catch (Exception e) {
+                    Log.e("Fehler", "Video konnte nicht geladen werden");
+                }
+            }
+        }catch (Exception e){
+
+        }
     }
 }

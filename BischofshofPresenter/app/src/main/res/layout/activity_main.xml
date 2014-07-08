@@ -83,21 +83,30 @@
         android:src="@drawable/background_line"
         />
 
-    <ImageView
+    <RelativeLayout
         android:layout_width="600dp"
         android:layout_height="400dp"
-        android:layout_centerInParent="true"
-        android:id="@+id/btn_start_presentation"
-        android:scaleType="fitXY"
-        />
+        android:layout_centerInParent="true">
+        <ImageView
+            android:layout_width="600dp"
+            android:layout_height="400dp"
+            android:layout_centerInParent="true"
+            android:id="@+id/btn_start_presentation"
+            android:scaleType="fitXY"
+            android:background="@drawable/btn_frame_wb"
+            />
+        <com.joanzapata.pdfview.PDFView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/pdf_view"/>
+        <VideoView
+            android:id="@+id/videoview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:visibility="invisible"/>
+    </RelativeLayout>
 
-    <TextView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:text="Content"
-        android:layout_alignTop="@id/btn_start_presentation"
-        android:layout_marginTop="300dp"
-        android:layout_marginLeft="300dp"/>
 
    </RelativeLayout>
 

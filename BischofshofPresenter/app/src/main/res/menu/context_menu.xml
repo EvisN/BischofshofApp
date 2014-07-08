@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/open"
+        android:title="Öffnen"/>
+    <item
+        android:id="@+id/mail"
+        android:title="Als Mail versenden"/>
+    <item
+        android:id="@+id/abbruch"
+        android:title="Abbrechen"/>
+</menu>
