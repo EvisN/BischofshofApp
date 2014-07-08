@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import lp.german.bischofshofpresenter.app.SimpleGestureFilter.SimpleGestureListener;
 
-public class PraesentationsActivity extends Activity implements SimpleGestureListener{
+public class PraesentationsActivity extends Activity{
 
     private SimpleGestureFilter detector;
     private File[] filesList;
@@ -28,7 +28,6 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        detector = new SimpleGestureFilter(this,this);
 
         //Setze Activity Fullscreen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -41,7 +40,7 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
         filesList = dir.listFiles();
         filePaths = new ArrayList<String>();
 
-        startFile();
+        startFile(filesList[0].getAbsolutePath());
 
         if(filesList!=null){
             for (int i = 0; i< filesList.length; i++){
@@ -58,36 +57,7 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
         return super.dispatchTouchEvent(me);
     }
 
-    @Override
-    public void onSwipe(int direction) {
-        /* Swipemenü wird noch in die Anzeigeactivity verschoben
-        String str = "";
 
-        switch (direction) {
-            case SimpleGestureFilter.SWIPE_RIGHT :
-                str = "Swipe Right";
-                break;
-            case SimpleGestureFilter.SWIPE_LEFT :
-                str = "Swipe Left";
-                break;
-            case SimpleGestureFilter.SWIPE_DOWN :
-                str = "Swipe Down";
-                break;
-            case SimpleGestureFilter.SWIPE_UP :
-                str = "Swipe Up";
-                Intent i = new Intent(this,SlideUpMenu.class);
-                i.putStringArrayListExtra("filePaths", filePaths);
-                startActivityForResult(i,1);
-                break;
-        }
-        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
-        */
-    }
-
-    @Override
-    public void onDoubleTap() {
-        //momentan unnötig
-    }
 
     //Checkt ob ein weiter oder zurück Button
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -95,48 +65,25 @@ public class PraesentationsActivity extends Activity implements SimpleGestureLis
         switch (requestCode){
             case NEXT_FILE_RESULT:
                 switch (resultCode){
-                    case NEXT_FILE:
-                        mCurrentFile += 1;
-                        startFile();
-                        break;
-                    case PREVIOUS_FILE:
-                        mCurrentFile -= 1;
-                        startFile();
+                    case RESULT_OK:
+                        startFile(data.getStringExtra("path"));
                         break;
                     default:
                         finish();
                         break;
                 }
                 break;
-            /* Gehört auch zum Swipemenü
-            case 1 :
-                if(resultCode == RESULT_OK){
-                    Toast toast = Toast.makeText(this,"Result: "+data.getStringExtra("path"),Toast.LENGTH_SHORT);
-                    toast.show();
-                    platzHalter = (TextView)findViewById(R.id.presentation);
-                    platzHalter.setText(data.getStringExtra("path"));
-                }
-                if (resultCode == RESULT_CANCELED) {
-                    //Write your code if there's no result
-                }
-                break;
-                */
             default:
                 break;
         }
     }
 
     //Started die Anzeigeactivity und gibt parameter mit ob es vorher oder nachher auch noch ein file gibt
-    private void startFile(){
+    private void startFile(String path){
 
             Intent i = new Intent(getApplicationContext(),SimpleFileViewActivity.class);
-            if(mCurrentFile<filesList.length-1) {
-                i.putExtra("hasNextFile", true);
-            }
-            if(mCurrentFile>0) {
-                i.putExtra("hasPreviousFile",true);
-            }
-            i.putExtra("file", filesList[mCurrentFile]);
+            i.putExtra("filePaths",filePaths);
+            i.putExtra("path",path);
             startActivityForResult(i,NEXT_FILE_RESULT);
     }
 }

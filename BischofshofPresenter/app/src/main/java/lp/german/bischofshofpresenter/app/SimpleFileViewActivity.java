@@ -14,14 +14,16 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.joanzapata.pdfview.PDFView;
 
 import java.io.File;
 
-public class SimpleFileViewActivity extends Activity {
+public class SimpleFileViewActivity extends Activity  implements SimpleGestureFilter.SimpleGestureListener {
 
+    private SimpleGestureFilter detector;
     private ImageView mNextFile, mPreviousFile;
     private PDFView pdfView;
     private ProgressDialog dialog;
@@ -30,6 +32,7 @@ public class SimpleFileViewActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        detector = new SimpleGestureFilter(this,this);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -63,7 +66,8 @@ public class SimpleFileViewActivity extends Activity {
     }
 
     private void setupUI() {
-        file = (File)getIntent().getExtras().get("file");
+        String path = getIntent().getExtras().getString("file");
+        file = new File(path);
         mNextFile = (ImageView)findViewById(R.id.next_file);
         mPreviousFile = (ImageView)findViewById(R.id.previous_file);
         pdfView = (PDFView) findViewById(R.id.pdfview);
@@ -156,5 +160,54 @@ public class SimpleFileViewActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        switch (requestCode){
+            case 1 :
+                if(resultCode == RESULT_OK){
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("path", data.getStringExtra("path"));
+                    setResult(RESULT_OK,returnIntent);
+                    finish();
+                }
+                if (resultCode == RESULT_CANCELED) {
+                    //Write your code if there's no result
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onSwipe(int direction) {
+        String str = "";
+
+        switch (direction) {
+            case SimpleGestureFilter.SWIPE_RIGHT :
+                str = "Swipe Right";
+                break;
+            case SimpleGestureFilter.SWIPE_LEFT :
+                str = "Swipe Left";
+                break;
+            case SimpleGestureFilter.SWIPE_DOWN :
+                str = "Swipe Down";
+                break;
+            case SimpleGestureFilter.SWIPE_UP :
+                str = "Swipe Up";
+                Intent i = new Intent(this,SlideUpMenu.class);
+                i.putStringArrayListExtra("filePaths", getIntent().getStringArrayListExtra("filePaths"));
+                startActivityForResult(i,1);
+                break;
+        }
+        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDoubleTap() {
+        //momentan unnötig
     }
 }
