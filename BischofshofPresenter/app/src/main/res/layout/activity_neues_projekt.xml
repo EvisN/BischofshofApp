@@ -14,7 +14,8 @@
 
     <RelativeLayout
         android:layout_width="200dp"
-        android:layout_height="fill_parent">
+        android:layout_height="fill_parent"
+        android:background="@drawable/navigation_background">
 
         <ImageButton
             android:layout_width="100dp"
@@ -83,6 +84,7 @@
             android:layout_above="@id/btn_speichern"
             android:id="@+id/menu"
             android:background="@drawable/navigation_background"
+            android:visibility="gone"
             >
             <ImageButton
                 android:layout_width="fill_parent"
