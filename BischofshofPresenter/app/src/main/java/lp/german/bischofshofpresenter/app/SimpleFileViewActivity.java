@@ -14,33 +14,28 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.joanzapata.pdfview.PDFView;
+import com.joanzapata.pdfview.listener.OnLoadCompleteListener;
 
 import java.io.File;
 
-public class SimpleFileViewActivity extends Activity  implements SimpleGestureFilter.SimpleGestureListener {
+public class SimpleFileViewActivity extends Activity{
 
-    private SimpleGestureFilter detector;
-    private ImageView mNextFile, mPreviousFile;
-    private PDFView pdfView;
+    private PDFView mPdfView;
     private ProgressDialog dialog;
     private File file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        detector = new SimpleGestureFilter(this,this);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_simple_fileview);
 
         setupUI();
-
-        checkIfNextPreviousFileExists();
 
         startFile();
 
@@ -49,7 +44,9 @@ public class SimpleFileViewActivity extends Activity  implements SimpleGestureFi
     private void startFile() {
         if(FileUtilities.getFileExtension(file.getName()).equals("pdf")) {
 
-            new loadPDFTask(this).execute(file);
+            //new loadPDFTask(this).execute(file);
+            setupPDFView();
+
 
         }else{
             try{
@@ -65,40 +62,35 @@ public class SimpleFileViewActivity extends Activity  implements SimpleGestureFi
         }
     }
 
+    private void setupPDFView() {
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("Loading PDF...");
+        mPdfView.fromFile(file)
+                .defaultPage(1)
+                .showMinimap(false)
+                .enableSwipe(true)
+                .onLoad(new OnLoadCompleteListener() {
+                    @Override
+                    public void loadComplete(int nbPages) {
+                        dialog.dismiss();
+                    }
+                })
+                .load();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        startFile();
+    }
+
     private void setupUI() {
         String path = getIntent().getExtras().getString("file");
         file = new File(path);
-        mNextFile = (ImageView)findViewById(R.id.next_file);
-        mPreviousFile = (ImageView)findViewById(R.id.previous_file);
-        pdfView = (PDFView) findViewById(R.id.pdfview);
+        mPdfView = (PDFView) findViewById(R.id.pdfview);
     }
 
-    private void checkIfNextPreviousFileExists() {
-        if(getIntent().getBooleanExtra("hasNextFile", false)){
-            mNextFile.setVisibility(View.VISIBLE);
-            mNextFile.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent returnIntent = new Intent();
-                    setResult(PraesentationsActivity.NEXT_FILE,returnIntent);
-                    finish();
-                }
-            });
-        }
-
-        if(getIntent().getBooleanExtra("hasPreviousFile", false)){
-            mPreviousFile.setVisibility(View.VISIBLE);
-            mPreviousFile.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent returnIntent = new Intent();
-                    setResult(PraesentationsActivity.PREVIOUS_FILE,returnIntent);
-                    finish();
-                }
-            });
-        }
-    }
-
+    /*
     //lädt PDF asynchron und zeigt ProgressDialog an
     private class loadPDFTask extends AsyncTask<Object,String,File> {
 
@@ -119,7 +111,7 @@ public class SimpleFileViewActivity extends Activity  implements SimpleGestureFi
         @Override
         protected File doInBackground(Object... args) {
             File file = (File)args[0];
-            pdfView.fromFile(file)
+            mPdfView.fromFile(file)
                     .defaultPage(1)
                     .showMinimap(false)
                     .enableSwipe(true)
@@ -134,6 +126,7 @@ public class SimpleFileViewActivity extends Activity  implements SimpleGestureFi
             }
         }
     }
+    */
 
     @Override
     public void onPause(){
@@ -141,6 +134,13 @@ public class SimpleFileViewActivity extends Activity  implements SimpleGestureFi
         super.onPause();
         if(dialog != null)
             dialog.dismiss();
+        mPdfView.recycle();
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        mPdfView.recycle();
     }
 
     @Override
@@ -182,7 +182,7 @@ public class SimpleFileViewActivity extends Activity  implements SimpleGestureFi
         }
     }
 
-    @Override
+    /*@Override
     public void onSwipe(int direction) {
         String str = "";
 
@@ -209,5 +209,5 @@ public class SimpleFileViewActivity extends Activity  implements SimpleGestureFi
     @Override
     public void onDoubleTap() {
         //momentan unnötig
-    }
+    }*/
 }

@@ -19,9 +19,11 @@ import java.util.ArrayList;
  */
 public class FileUtilities {
 
-    public static String PFAD_ROOT = Environment.getExternalStorageDirectory() + "/Bischofshof/";
-    public static String PFAD_PROJEKTE = Environment.getExternalStorageDirectory() + "/Bischofshof/Projekte";
-    public static String PFAD_PRAESENTATION = Environment.getExternalStorageDirectory() + "/Bischofshof/tempCurrent";
+    public static String PFAD_ROOT = Environment.getExternalStorageDirectory() + "/BischofsHofApp/";
+    public static String PFAD_WB = Environment.getExternalStorageDirectory() + "/BischofsHofApp/Weltenburger/";
+    public static String PFAD_BH = Environment.getExternalStorageDirectory() + "/BischofsHofApp/Bischofshof/";
+    public static String PFAD_PROJEKTE = Environment.getExternalStorageDirectory() + "/BischofsHofApp/Projekte";
+    public static String PFAD_PRAESENTATION = Environment.getExternalStorageDirectory() + "/BischofsHofApp/tempCurrent";
 
     //Gibt Dateiendung zurück
     public static String getFileExtension(String fileName) {

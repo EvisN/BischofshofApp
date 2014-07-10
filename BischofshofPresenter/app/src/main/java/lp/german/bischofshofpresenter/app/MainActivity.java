@@ -32,6 +32,8 @@ public class MainActivity extends Activity {
     private ProgressDialog dialog;
     private PDFView pdfView;
     private VideoView videoView;
+    private File firstFile;
+    private TextView txtNoPresentation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,19 +59,11 @@ public class MainActivity extends Activity {
 
         pdfView = (PDFView)findViewById(R.id.pdf_view);
         videoView = (VideoView)findViewById(R.id.videoview);
+
+        txtNoPresentation = (TextView)findViewById(R.id.no_presentation);
     }
 
     private void addUIClickListeners(){
-
-        //Intents
-        btnStartPresentation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), PraesentationsActivity.class);
-                startActivity(i);
-                overridePendingTransition(R.anim.zoom_in,R.anim.zoom_out);
-            }
-        });
 
         btnEinstellungen.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,14 +140,18 @@ public class MainActivity extends Activity {
             super.onPostExecute(result);
             if(dialog!=null) {
                 dialog.dismiss();
-                btnStartPresentation.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent i = new Intent(getApplicationContext(), PraesentationsActivity.class);
-                        startActivity(i);
-                        overridePendingTransition(R.anim.zoom_in,R.anim.zoom_out);
-                    }
-                });
+                if(FileUtilities.getNumberOfFilesFromPath(FileUtilities.PFAD_PRAESENTATION)!=0) {
+                    btnStartPresentation.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            pdfView.recycle();
+                            Intent i = new Intent(getApplicationContext(), SimpleFileViewActivity.class);
+                            i.putExtra("file",firstFile.getAbsolutePath());
+                            startActivity(i);
+                            overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
+                        }
+                    });
+                }
             }
         }
     }
@@ -174,9 +172,16 @@ public class MainActivity extends Activity {
         setPreview();
     }
 
+    @Override
+    protected void onPause(){
+        super.onPause();
+        pdfView.recycle();
+    }
+
     private void setLayoutBischofshof(){
         imgLogo.setImageResource(R.drawable.logo_bischofshof);
         btnStartPresentation.setImageResource(R.drawable.btn_frame);
+        btnStartPresentation.invalidate();
         btnSchnellzugriff.setImageResource(R.drawable.btn_schnellzugriff_selector);
         btnNeuePraesentation.setImageResource(R.drawable.btn_neue_praesentation_selector);
         btnGespeichertePraesentationen.setImageResource(R.drawable.btn_gespeicherte_praesentationen_selector);
@@ -187,6 +192,7 @@ public class MainActivity extends Activity {
     private void setLayoutWeltenburger(){
         imgLogo.setImageResource(R.drawable.logo_weltenburger);
         btnStartPresentation.setImageResource(R.drawable.btn_frame_wb);
+        btnStartPresentation.invalidate();
         btnSchnellzugriff.setImageResource(R.drawable.btn_schnellzugriff_wb_selector);
         btnNeuePraesentation.setImageResource(R.drawable.btn_neue_praesentation_wb_selector);
         btnGespeichertePraesentationen.setImageResource(R.drawable.btn_gespeicherte_praesentationen_wb_selector);
@@ -197,30 +203,41 @@ public class MainActivity extends Activity {
     private void setPreview(){
         try {
             File directory = new File(gewaehlteProjekte.get(0));
-
             File[] files = directory.listFiles();
-            File firstFile = files[0];
+            for(File file: files) {
+                if(file.getName().matches(".*[1]\\.(pdf|mov|mp4)")) {
+                    firstFile = file;
+                }
+            }
+
+            if(firstFile==null){
+                firstFile = files[0];
+            }
 
             if (FileUtilities.getFileExtension(firstFile.getName()).equals("pdf")) {
                 videoView.setVisibility(View.GONE);
                 pdfView.setVisibility(View.VISIBLE);
                 pdfView.fromFile(firstFile).pages(0).load();
+                txtNoPresentation.setVisibility(View.GONE);
             } else {
-                pdfView.setVisibility(View.VISIBLE);
-                videoView.setVisibility(View.GONE);
+                pdfView.setVisibility(View.GONE);
+                videoView.setVisibility(View.VISIBLE);
+                Log.d("PREVIEW", "Set Preview to Video");
                 try {
                     VideoView mVideoView = (VideoView) findViewById(R.id.videoview);
                     mVideoView.setVisibility(View.VISIBLE);
                     Uri uri = Uri.parse(firstFile.getAbsolutePath());
                     mVideoView.setVideoURI(uri);
                     mVideoView.requestFocus();
-                    mVideoView.start();
                 } catch (Exception e) {
                     Log.e("Fehler", "Video konnte nicht geladen werden");
                 }
+                txtNoPresentation.setVisibility(View.GONE);
             }
         }catch (Exception e){
-
+            videoView.setVisibility(View.GONE);
+            pdfView.setVisibility(View.GONE);
+            txtNoPresentation.setVisibility(View.VISIBLE);
         }
     }
 }

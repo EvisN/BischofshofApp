@@ -40,7 +40,7 @@ public class PraesentationsActivity extends Activity{
         filesList = dir.listFiles();
         filePaths = new ArrayList<String>();
 
-        startFile(filesList[0].getAbsolutePath());
+        startFile(getIntent().getStringExtra("file"));
 
         if(filesList!=null){
             for (int i = 0; i< filesList.length; i++){
@@ -66,7 +66,7 @@ public class PraesentationsActivity extends Activity{
             case NEXT_FILE_RESULT:
                 switch (resultCode){
                     case RESULT_OK:
-                        startFile(data.getStringExtra("path"));
+                        startFile(data.getStringExtra("file"));
                         break;
                     default:
                         finish();

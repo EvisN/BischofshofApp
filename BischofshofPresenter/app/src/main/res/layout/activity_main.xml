@@ -87,24 +87,37 @@
         android:layout_width="600dp"
         android:layout_height="400dp"
         android:layout_centerInParent="true">
-        <ImageView
-            android:layout_width="600dp"
-            android:layout_height="400dp"
-            android:layout_centerInParent="true"
-            android:id="@+id/btn_start_presentation"
-            android:scaleType="fitXY"
-            android:background="@drawable/btn_frame_wb"
-            />
+
         <com.joanzapata.pdfview.PDFView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/pdf_view"/>
+            android:id="@+id/pdf_view"
+            android:visibility="invisible"/>
         <VideoView
             android:id="@+id/videoview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:visibility="invisible"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Keine Präsentation geladen!&#10;Wählen unter &quot;Gespeicherte Präsentationen&quot;"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:background="@android:color/black"
+            android:textSize="24dp"
+            android:textColor="@android:color/white"
+            android:id="@+id/no_presentation"
+            />
+        <ImageView
+            android:layout_width="600dp"
+            android:layout_height="400dp"
+            android:layout_centerInParent="true"
+            android:id="@+id/btn_start_presentation"
+            android:scaleType="fitXY"
+            android:src="@drawable/btn_frame_wb"
+            />
     </RelativeLayout>
 
 

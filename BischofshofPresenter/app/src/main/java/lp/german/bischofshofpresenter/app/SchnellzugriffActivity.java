@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,6 +51,8 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
 
     private String mMarke;
 
+    private Boolean isBischofshof = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,33 +78,43 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
             mLinearLayout.setBackgroundColor(getResources().getColor(android.R.color.white));
         }
 
-        //Listview im Drawer mit den Ordnern Populaten
-        filesList = FileUtilities.getAllFilesFromPath(FileUtilities.PFAD_ROOT);
-        filePaths = FileUtilities.getAbsolutePathsFromFolder(FileUtilities.PFAD_ROOT);
-        addItems(filesList);
+        addItems(FileUtilities.PFAD_ROOT);
 
         addItemsToContainer(FileUtilities.PFAD_ROOT);
 
     }
 
 
-    private void addItems(File[] files){
+    private void addItems(String path){
+        File[] files = FileUtilities.getAllFilesFromPath(path);
         navDrawerItems = new ArrayList<NavDrawerItem>();
 
         int mCount = 0;
-        for(int i = 0; i<files.length; i++){
+        for(int i = 0; i<files.length; i++) {
 
-            mCount = FileUtilities.getNumberOfFilesFromPath(files[i].getAbsolutePath());
+            if (files[i].isDirectory()){
+                mCount = FileUtilities.getNumberOfFilesFromPath(files[i].getAbsolutePath());
+            }
 
             //Ausschluss vom Projekt und Präsentationsordner und Dateien
             if(!files[i].getName().equals("Projekte")&&!files[i].getName().equals("tempCurrent")&&files[i].isDirectory()) {
+                Log.d("Filenames:", files[i].getName());
                 if(mCount==0){
-                    navDrawerItems.add(new NavDrawerItem(filePaths.get(i), files[i].getAbsolutePath()));
+                    navDrawerItems.add(new NavDrawerItem(files[i].getName(), files[i].getAbsolutePath()));
                 }else{
-                    navDrawerItems.add(new NavDrawerItem(filePaths.get(i), files[i].getAbsolutePath(), true, String.valueOf(mCount)));
+                    navDrawerItems.add(new NavDrawerItem(files[i].getName(), files[i].getAbsolutePath(), true, String.valueOf(mCount)));
                 }
             }
+
+            mCount = 0;
         }
+
+
+        File file = new File(path);
+        if(!file.getName().equals("BischofsHofApp")) {
+            navDrawerItems.add(new NavDrawerItem("Zurück", file.getParentFile().getAbsolutePath()));
+        }
+
 
         //ListAdapter setzen
         adapter = new NavDrawerListAdapter(getApplicationContext(),
@@ -142,16 +155,13 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
             mTitle = item.getTitle();
 
             try {
-                Toast toast = Toast.makeText(getApplicationContext(), item.getAbsolutePath(), Toast.LENGTH_SHORT);
-                toast.show();
                 addItemsToContainer(item.getAbsolutePath());
-
+                addItems(item.getAbsolutePath());
             }catch (Exception e){
                 Toast toast = Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT);
                 toast.show();
             }
             mDrawerLayout.closeDrawers();
-            mDrawerList.setItemChecked(position, true);
         }
     }
 
@@ -165,43 +175,85 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
 
         for(int i = 0; i<files.length; i++)
         {
-            final File currentFile = files[i];
-            String fileName = currentFile.getName();
-            LayoutInflater vi = (LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            if (!files[i].getName().equals("tempCurrent")&&!files[i].getName().equals("Projekte")) {
+                final File currentFile = files[i];
+                String fileName = currentFile.getName();
+                LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View v = vi.inflate(R.layout.file_template, null);
+
+                TextView textView = (TextView) v.findViewById(R.id.file_template_text);
+
+                if (fileName.length() > 10) {
+                    textView.setText(fileName.substring(0, 10) + "...");
+                } else {
+                    textView.setText(fileName);
+                }
+
+                ImageView imageView = (ImageView) v.findViewById(R.id.file_template_img);
+
+
+                if (FileUtilities.getFileExtension(fileName).equals("pdf")) {
+                    imageView.setImageResource(R.drawable.pdf2);
+                } else {
+                    if (!files[i].isDirectory()) {
+                        imageView.setImageResource(R.drawable.video);
+                    } else {
+                        if(isBischofshof||files[i].getName().equals("Bischofshof")) {
+                            imageView.setImageResource(R.drawable.icon_ordner_bh);
+                        }else {
+                            imageView.setImageResource(R.drawable.icon_ordner_wb);
+                        }
+
+                        if(files[i].getName().equals("Weltenburger")) {
+                            imageView.setImageResource(R.drawable.icon_ordner_wb);
+                        }
+                    }
+                }
+
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!currentFile.isDirectory()) {
+                            clickedFile = currentFile;
+                            showPopup(v);
+                        } else {
+                            isBischofshof = currentFile.getAbsolutePath().toString().matches(".*Bischofshof.*");
+
+                            addItems(currentFile.getAbsolutePath());
+                            addItemsToContainer(currentFile.getAbsolutePath());
+                        }
+                    }
+                });
+
+                mLinearLayout = findViewById(R.id.container);
+                group.addView(v);
+            }
+        }
+
+        if(!files[0].getParentFile().getName().equals("sdcard")&&!files[0].getParentFile().getName().equals("BischofsHofApp")) {
+            final File currentFile = files[0].getParentFile().getParentFile();
+            String fileName = "...";
+            LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View v = vi.inflate(R.layout.file_template, null);
 
-            TextView textView = (TextView)v.findViewById(R.id.file_template_text);
-            textView.setText(fileName.substring(0, 10)+"...");
+            TextView textView = (TextView) v.findViewById(R.id.file_template_text);
+            textView.setText(fileName);
 
-            ImageView imageView = (ImageView)v.findViewById(R.id.file_template_img);
+            ImageView imageView = (ImageView) v.findViewById(R.id.file_template_img);
 
-
-            if(FileUtilities.getFileExtension(fileName).equals("pdf")){
-                imageView.setImageResource(R.drawable.pdf2);
-            }else {
-                if (!files[i].isDirectory()){
-                    imageView.setImageResource(R.drawable.video);
-                }else{
-                    //Folder icon
-                }
-            }
+            imageView.setImageResource(R.drawable.previous);
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(!currentFile.isDirectory()) {
-                        clickedFile = currentFile;
-                        showPopup(v);
-                    }else {
-                        addItemsToContainer(currentFile.getAbsolutePath());
-                    }
+                    addItemsToContainer(currentFile.getAbsolutePath());
+                    addItems(currentFile.getAbsolutePath());
                 }
             });
-
-            mLinearLayout = findViewById(R.id.container);
-            group.addView(v);
+            group.addView(v, 0);
         }
     }
+
 
     public void showPopup(View v) {
         PopupMenu popup = new PopupMenu(this, v);
@@ -231,7 +283,7 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
         Toast toast = Toast.makeText(getApplicationContext(),"Open file: "+file.getAbsolutePath(),Toast.LENGTH_SHORT);
         toast.show();
         Intent i = new Intent(getApplicationContext(), SimpleFileViewActivity.class);
-        i.putExtra("file", file);
+        i.putExtra("file", file.getAbsolutePath());
         startActivity(i);
     }
 

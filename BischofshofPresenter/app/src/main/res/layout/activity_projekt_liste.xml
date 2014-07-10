@@ -12,6 +12,7 @@
         android:padding="50dp"
         android:orientation="horizontal"
         android:background="@drawable/skyline"
+        android:isScrollContainer="true"
         />
 
 

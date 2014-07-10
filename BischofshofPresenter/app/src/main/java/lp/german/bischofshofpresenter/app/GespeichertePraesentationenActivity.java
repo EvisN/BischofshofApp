@@ -10,25 +10,29 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import lp.german.slidingmenu.adapter.NavDrawerListAdapter;
 import lp.german.slidingmenu.model.NavDrawerItem;
 
 
-public class GespeichertePraesentationenActivity extends Activity {
+public class GespeichertePraesentationenActivity extends Activity implements PopupMenu.OnMenuItemClickListener {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -46,6 +50,7 @@ public class GespeichertePraesentationenActivity extends Activity {
     private NavDrawerListAdapter adapter;
 
     private File[] filesList;
+    private File clickedFile;
     private ArrayList<String> filePaths;
 
     private String mMarke;
@@ -145,6 +150,8 @@ public class GespeichertePraesentationenActivity extends Activity {
             }
         }
 
+        Collections.reverse(paths);
+
         return paths;
     }
 
@@ -168,7 +175,7 @@ public class GespeichertePraesentationenActivity extends Activity {
             //Checkt oder Unchecked das Item
             mDrawerList.setItemChecked(position, item.isItemChecked() ? false : true);
             item.setChecked();
-
+            mDrawerLayout.closeDrawers();
         }
     }
 
@@ -182,6 +189,7 @@ public class GespeichertePraesentationenActivity extends Activity {
 
         for(int i = 0; i<files.length; i++)
         {
+            Log.d("FILE:",files[i].getName());
             final File currentFile = files[i];
             String fileName = currentFile.getName();
             LayoutInflater vi = (LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -201,7 +209,8 @@ public class GespeichertePraesentationenActivity extends Activity {
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    openFile(currentFile);
+                    clickedFile = currentFile;
+                    showPopup(v);
                 }
             });
 
@@ -210,13 +219,35 @@ public class GespeichertePraesentationenActivity extends Activity {
         }
     }
 
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.open:
+                openFile(clickedFile);
+                return true;
+            case R.id.mail:
+                //TODO Mailversenden
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        popup.setOnMenuItemClickListener(this);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.context_menu, popup.getMenu());
+        popup.show();
+    }
+
     //Öffnet die Files auf Click
     private void openFile(File file){
         //PDFActivity
         Toast toast = Toast.makeText(getApplicationContext(),"Open file: "+file.getAbsolutePath(),Toast.LENGTH_SHORT);
         toast.show();
         Intent i = new Intent(getApplicationContext(), SimpleFileViewActivity.class);
-        i.putExtra("file", file);
+        i.putExtra("file", file.getAbsolutePath());
         startActivity(i);
     }
 
