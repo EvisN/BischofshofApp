@@ -26,7 +26,7 @@ import com.joanzapata.pdfview.PDFView;
 
 public class MainActivity extends Activity {
 
-    private ImageView btnStartPresentation, imgLogo, btnEinstellungen, btnNeuePraesentation, btnGespeichertePraesentationen, btnSchnellzugriff, backgroundStartPresentation;
+    private ImageView btnStartPresentation, imgLogo, btnEinstellungen, btnNeuePraesentation, btnGespeichertePraesentationen, btnSchnellzugriff, backgroundStartPresentation, imgNavBackground;
     public static final int PROJEKTE_BEARBEITET = 105;
     private ArrayList<String> gewaehlteProjekte;
     private ProgressDialog dialog;
@@ -49,6 +49,7 @@ public class MainActivity extends Activity {
 
         imgLogo = (ImageView)findViewById(R.id.img_logo);
         backgroundStartPresentation = (ImageView)findViewById(R.id.background_start_presentation);
+        imgNavBackground = (ImageView)findViewById(R.id.nav_background);
 
         //Navigationsbuttons
         btnStartPresentation = (ImageView)findViewById(R.id.btn_start_presentation);
@@ -180,8 +181,8 @@ public class MainActivity extends Activity {
 
     private void setLayoutBischofshof(){
         imgLogo.setImageResource(R.drawable.logo_bischofshof);
+        imgNavBackground.setImageResource(R.drawable.navigation_background);
         btnStartPresentation.setImageResource(R.drawable.btn_frame);
-        btnStartPresentation.invalidate();
         btnSchnellzugriff.setImageResource(R.drawable.btn_schnellzugriff_selector);
         btnNeuePraesentation.setImageResource(R.drawable.btn_neue_praesentation_selector);
         btnGespeichertePraesentationen.setImageResource(R.drawable.btn_gespeicherte_praesentationen_selector);
@@ -191,8 +192,8 @@ public class MainActivity extends Activity {
 
     private void setLayoutWeltenburger(){
         imgLogo.setImageResource(R.drawable.logo_weltenburger);
+        imgNavBackground.setImageResource(R.drawable.grey_gradient);
         btnStartPresentation.setImageResource(R.drawable.btn_frame_wb);
-        btnStartPresentation.invalidate();
         btnSchnellzugriff.setImageResource(R.drawable.btn_schnellzugriff_wb_selector);
         btnNeuePraesentation.setImageResource(R.drawable.btn_neue_praesentation_wb_selector);
         btnGespeichertePraesentationen.setImageResource(R.drawable.btn_gespeicherte_praesentationen_wb_selector);

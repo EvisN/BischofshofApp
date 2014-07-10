@@ -21,19 +21,23 @@
         <ImageView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="@drawable/navigation_background"/>
+            android:id="@+id/nav_background"
+            android:background="@drawable/grey_gradient"/>
 
         <ImageView
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/img_logo"
-            android:background="@android:color/transparent"
+            android:layout_marginTop="20dp"
+            android:layout_height="140dp"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/white"
         />
 
         <ImageView
             android:layout_width="fill_parent"
             android:layout_height="100dp"
             android:layout_below="@id/img_logo"
+            android:layout_marginTop="20dp"
             android:id="@+id/btn_new_presentation"
             android:scaleType="fitXY"
             />
@@ -41,6 +45,7 @@
         <ImageView
             android:layout_width="fill_parent"
             android:layout_height="100dp"
+            android:layout_marginTop="5dp"
             android:layout_below="@id/btn_new_presentation"
             android:id="@+id/btn_saved_presentations"
             android:scaleType="fitXY"
@@ -49,6 +54,7 @@
         <ImageView
             android:layout_width="fill_parent"
             android:layout_height="100dp"
+            android:layout_marginTop="5dp"
             android:layout_below="@id/btn_saved_presentations"
             android:id="@+id/btn_schnellzugriff"
             android:scaleType="fitXY"
@@ -72,7 +78,6 @@
     <View
         android:layout_width="1dp"
         android:layout_height="fill_parent"
-        android:background="@android:color/black"
         />
 
     <ImageView
@@ -89,14 +94,15 @@
         android:layout_centerInParent="true">
 
         <com.joanzapata.pdfview.PDFView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="500dp"
+            android:layout_height="320dp"
             android:id="@+id/pdf_view"
+            android:layout_centerInParent="true"
             android:visibility="invisible"/>
         <VideoView
             android:id="@+id/videoview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="500dp"
+            android:layout_height="320dp"
             android:layout_centerInParent="true"
             android:visibility="invisible"/>
         <TextView
