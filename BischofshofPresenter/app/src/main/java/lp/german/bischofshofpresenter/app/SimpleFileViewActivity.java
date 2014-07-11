@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.VideoView;
 
@@ -24,8 +25,10 @@ import java.io.File;
 public class SimpleFileViewActivity extends Activity{
 
     private PDFView mPdfView;
+    private VideoView mVideoView;
     private ProgressDialog dialog;
     private File file;
+    private ImageButton menuButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +38,7 @@ public class SimpleFileViewActivity extends Activity{
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_simple_fileview);
 
-        setupUI();
+        setupUI(this);
 
         startFile();
 
@@ -45,13 +48,14 @@ public class SimpleFileViewActivity extends Activity{
         if(FileUtilities.getFileExtension(file.getName()).equals("pdf")) {
 
             //new loadPDFTask(this).execute(file);
+            mPdfView.setVisibility(View.VISIBLE);
             setupPDFView();
-
+            mVideoView.setVisibility(View.GONE);
 
         }else{
             try{
-                VideoView mVideoView = (VideoView)findViewById(R.id.videoview);
                 mVideoView.setVisibility(View.VISIBLE);
+                mPdfView.setVisibility(View.GONE);
                 Uri uri = Uri.parse(file.getAbsolutePath());
                 mVideoView.setVideoURI(uri);
                 mVideoView.requestFocus();
@@ -84,10 +88,22 @@ public class SimpleFileViewActivity extends Activity{
         startFile();
     }
 
-    private void setupUI() {
+    private void setupUI(Context ctx) {
+
+        final Context context = ctx;
         String path = getIntent().getExtras().getString("file");
         file = new File(path);
         mPdfView = (PDFView) findViewById(R.id.pdfview);
+        menuButton = (ImageButton)findViewById(R.id.menuButton);
+        mVideoView = (VideoView)findViewById(R.id.videoview);
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(context,SlideUpMenu.class);
+                i.putStringArrayListExtra("filePaths", getIntent().getStringArrayListExtra("filePaths"));
+                startActivityForResult(i,1);
+            }
+        });
     }
 
     /*
@@ -167,10 +183,8 @@ public class SimpleFileViewActivity extends Activity{
         switch (requestCode){
             case 1 :
                 if(resultCode == RESULT_OK){
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("path", data.getStringExtra("path"));
-                    setResult(RESULT_OK,returnIntent);
-                    finish();
+                    file = new File(getIntent().getStringExtra("presentationPath")+data.getExtras().getString("path"));
+                    startFile();
                 }
                 if (resultCode == RESULT_CANCELED) {
                     //Write your code if there's no result

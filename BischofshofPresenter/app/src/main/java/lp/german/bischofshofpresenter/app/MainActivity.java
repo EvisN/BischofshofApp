@@ -13,8 +13,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -24,7 +28,7 @@ import java.util.ArrayList;
 
 import com.joanzapata.pdfview.PDFView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity{
 
     private ImageView btnStartPresentation, imgLogo, btnEinstellungen, btnNeuePraesentation, btnGespeichertePraesentationen, btnSchnellzugriff, backgroundStartPresentation, imgNavBackground;
     public static final int PROJEKTE_BEARBEITET = 105;
@@ -34,11 +38,17 @@ public class MainActivity extends Activity {
     private VideoView videoView;
     private File firstFile;
     private TextView txtNoPresentation;
+    private Spinner navSpinner;
+    private ArrayAdapter navSpinnerAdapter;
+    private ArrayList<String> navSpinnerItems;
+    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
         setupUIElements();
         addUIClickListeners();
@@ -61,7 +71,37 @@ public class MainActivity extends Activity {
         pdfView = (PDFView)findViewById(R.id.pdf_view);
         videoView = (VideoView)findViewById(R.id.videoview);
 
+        setupSpinner(this);
+
         txtNoPresentation = (TextView)findViewById(R.id.no_presentation);
+    }
+
+    private void setupSpinner(final Context ctx) {
+        final Context context = ctx;
+        navSpinner = (Spinner)findViewById(R.id.nav_spinner);
+        navSpinnerAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, FileUtilities.getProjectNames());
+        navSpinner.setAdapter(navSpinnerAdapter);
+        navSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                pdfView.recycle();
+                String path = FileUtilities.PFAD_PROJEKTE+"/"+parent.getItemAtPosition(position).toString();
+                gewaehlteProjekte = new ArrayList<String>();
+                gewaehlteProjekte.add(path);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putInt(SettingsActivity.KEY_PREF_PROJECT, position);
+                editor.commit();
+                new updatePresentationFolder(context).execute();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        if(sharedPref.contains(SettingsActivity.KEY_PREF_PROJECT)) {
+            navSpinner.setSelection(sharedPref.getInt(SettingsActivity.KEY_PREF_PROJECT, 0));
+        }
     }
 
     private void addUIClickListeners(){
@@ -148,10 +188,13 @@ public class MainActivity extends Activity {
                             pdfView.recycle();
                             Intent i = new Intent(getApplicationContext(), SimpleFileViewActivity.class);
                             i.putExtra("file",firstFile.getAbsolutePath());
+                            i.putExtra("filePaths",FileUtilities.getAbsolutePathsFromFolder(FileUtilities.PFAD_PRAESENTATION));
+                            i.putExtra("presentationPath", FileUtilities.PFAD_PROJEKTE+"/"+navSpinner.getSelectedItem().toString());
                             startActivity(i);
                             overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out);
                         }
                     });
+                    setPreview();
                 }
             }
         }
@@ -206,7 +249,7 @@ public class MainActivity extends Activity {
             File directory = new File(gewaehlteProjekte.get(0));
             File[] files = directory.listFiles();
             for(File file: files) {
-                if(file.getName().matches(".*[1]\\.(pdf|mov|mp4)")) {
+                if(file.getName().matches("[1].*")) {
                     firstFile = file;
                 }
             }

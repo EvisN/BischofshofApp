@@ -1,5 +1,6 @@
 package lp.german.bischofshofpresenter.app;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -17,9 +18,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,56 +35,97 @@ import lp.german.slidingmenu.model.NavDrawerItem;
 
 public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenuItemClickListener {
 
-    private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
-    private ActionBarDrawerToggle mDrawerToggle;
     private View mLinearLayout;
     private ImageView mFrame;
-
-    private CharSequence mDrawerTitle;
 
     private CharSequence mTitle;
 
     private ArrayList<NavDrawerItem> navDrawerItems;
     private NavDrawerListAdapter adapter;
 
-    private File[] filesList;
     private File clickedFile;
-    private ArrayList<String> filePaths;
+
+    private ImageView btn_wb, btn_bh;
 
     private String mMarke;
 
     private Boolean isBischofshof = true;
+
+    private ActionBar ab;
+
+    private int FOLDER_ICON;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_projekt_liste);
 
-        mTitle = mDrawerTitle = "<< Bitte Ordner wählen";
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
-        mFrame = (ImageView)findViewById(R.id.frame_screen);
-        mLinearLayout = findViewById(R.id.container);
+        setupUI();
+        setupListeners();
 
         //Design prüfen
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         mMarke = sharedPref.getString(SettingsActivity.KEY_PREF_MARKE, "");
 
         if(mMarke.equals("pref_bischofshof")){
-            mFrame.setImageResource(R.drawable.frame_screen);
-            mLinearLayout.setBackgroundResource(R.drawable.skyline);
+            setDesignBischofshof();
         }else{
-
-            mFrame.setImageResource(R.drawable.frame_screen_wb);
-            mLinearLayout.setBackgroundColor(getResources().getColor(android.R.color.white));
+            setDesignWeltenburger();
         }
+    }
 
-        addItems(FileUtilities.PFAD_ROOT);
+    private void setDesignWeltenburger() {
+        mFrame.setImageResource(R.drawable.frame_screen_wb);
+        mLinearLayout.setBackgroundColor(getResources().getColor(android.R.color.white));
+        mDrawerList.setBackgroundResource(R.drawable.grey_gradient);
+        FOLDER_ICON = R.drawable.icon_ordner_wb;
+        btn_bh.setBackgroundColor(0xFFAAAAAA);
+        btn_wb.setBackgroundColor(0x00AAAAAA);
+        addItems(FileUtilities.PFAD_WB);
+        addItemsToContainer(FileUtilities.PFAD_WB);
+    }
 
-        addItemsToContainer(FileUtilities.PFAD_ROOT);
+    private void setDesignBischofshof() {
+        mFrame.setImageResource(R.drawable.frame_screen);
+        mLinearLayout.setBackgroundResource(R.drawable.skyline);
+        mDrawerList.setBackgroundResource(R.drawable.navigation_background);
+        FOLDER_ICON = R.drawable.icon_ordner_bh;
+        btn_bh.setBackgroundColor(0x00AAAAAA);
+        btn_wb.setBackgroundColor(0xFFAAAAAA);
+        addItems(FileUtilities.PFAD_BH);
+        addItemsToContainer(FileUtilities.PFAD_BH);
+    }
 
+    private void setupUI() {
+        mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
+        mFrame = (ImageView)findViewById(R.id.frame_screen);
+        mLinearLayout = findViewById(R.id.container);
+        btn_bh = (ImageView)findViewById(R.id.btn_bh);
+        btn_wb = (ImageView)findViewById(R.id.btn_wb);
+        ab = getActionBar();
+    }
+
+    private void setupListeners(){
+        btn_bh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDesignBischofshof();
+                addItemsToContainer(FileUtilities.PFAD_BH);
+                addItems(FileUtilities.PFAD_BH);
+                ab.setTitle("Bischofshof");
+            }
+        });
+
+        btn_wb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDesignWeltenburger();
+                addItemsToContainer(FileUtilities.PFAD_WB);
+                addItems(FileUtilities.PFAD_WB);
+                ab.setTitle("Weltenburger");
+            }
+        });
     }
 
 
@@ -111,7 +155,7 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
 
 
         File file = new File(path);
-        if(!file.getName().equals("BischofsHofApp")) {
+        if(!file.getName().equals("Bischofshof")&&!file.getName().equals("Weltenburger")) {
             navDrawerItems.add(new NavDrawerItem("Zurück", file.getParentFile().getAbsolutePath()));
         }
 
@@ -125,24 +169,6 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.drawable.ic_browse, //nav menu toggle icon
-                R.string.app_name, // nav drawer open - description for accessibility
-                R.string.app_name // nav drawer close - description for accessibility
-        ){
-            public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mTitle);
-                // calling onPrepareOptionsMenu() to show action bar icons
-                invalidateOptionsMenu();
-            }
-
-            public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
-                // calling onPrepareOptionsMenu() to hide action bar icons
-                invalidateOptionsMenu();
-            }
-        };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
 
     }
 
@@ -153,6 +179,11 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
             NavDrawerItem item = (NavDrawerItem)adapter.getItem(position);
 
             mTitle = item.getTitle();
+            if(!mTitle.equals("Zurück")) {
+                ab.setSubtitle(mTitle);
+            }else {
+                ab.setSubtitle("");
+            }
 
             try {
                 addItemsToContainer(item.getAbsolutePath());
@@ -161,7 +192,6 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
                 Toast toast = Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT);
                 toast.show();
             }
-            mDrawerLayout.closeDrawers();
         }
     }
 
@@ -198,15 +228,7 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
                     if (!files[i].isDirectory()) {
                         imageView.setImageResource(R.drawable.video);
                     } else {
-                        if(isBischofshof||files[i].getName().equals("Bischofshof")) {
-                            imageView.setImageResource(R.drawable.icon_ordner_bh);
-                        }else {
-                            imageView.setImageResource(R.drawable.icon_ordner_wb);
-                        }
-
-                        if(files[i].getName().equals("Weltenburger")) {
-                            imageView.setImageResource(R.drawable.icon_ordner_wb);
-                        }
+                       imageView.setImageResource(FOLDER_ICON);
                     }
                 }
 
@@ -219,6 +241,7 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
                         } else {
                             isBischofshof = currentFile.getAbsolutePath().toString().matches(".*Bischofshof.*");
 
+                            ab.setSubtitle(currentFile.getName());
                             addItems(currentFile.getAbsolutePath());
                             addItemsToContainer(currentFile.getAbsolutePath());
                         }
@@ -287,44 +310,6 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
         startActivity(i);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.projekt_liste_aktivity, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // toggle nav drawer on selecting action bar app icon/title
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        // Handle action bar actions click
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    /***
-     * Called when invalidateOptionsMenu() is triggered
-     */
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // if nav drawer is opened, hide the action items
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public void setTitle(CharSequence title) {
-        mTitle = title;
-        getActionBar().setTitle(mTitle);
-    }
-
     /**
      * When using the ActionBarDrawerToggle, you must call it during
      * onPostCreate() and onConfigurationChanged()...
@@ -334,13 +319,11 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         // Pass any configuration change to the drawer toggls
-        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 }

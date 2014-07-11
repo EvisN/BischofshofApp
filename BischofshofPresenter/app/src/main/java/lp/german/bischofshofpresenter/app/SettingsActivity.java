@@ -9,6 +9,8 @@ import android.os.Bundle;
 public class SettingsActivity extends Activity {
 
     public static final String KEY_PREF_MARKE = "pref_marke";
+    public static final String KEY_PREF_PATH = "pref_path";
+    public static final String KEY_PREF_PROJECT = "pref_project";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,5 +20,9 @@ public class SettingsActivity extends Activity {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new Preferences())
                 .commit();
+    }
+
+    public void setupFolder(){
+
     }
 }

@@ -1,4 +1,4 @@
-<android.support.v4.widget.DrawerLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
@@ -8,10 +8,11 @@
     <lp.german.bischofshofpresenter.app.UmbruchLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="240dp"
         android:padding="50dp"
         android:orientation="horizontal"
-        android:background="@drawable/skyline"
+        android:layout_centerVertical="true"
         android:isScrollContainer="true"
         />
 
@@ -19,20 +20,35 @@
     <ImageView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_marginLeft="240dp"
         android:src="@drawable/frame_screen"
         android:id="@+id/frame_screen"
         android:scaleType="fitXY"
         />
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:id="@+id/btn_bh"
+        android:src="@drawable/logo_bischofshof"/>
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:id="@+id/btn_wb"
+        android:src="@drawable/logo_weltenburger"
+        android:layout_toRightOf="@id/btn_bh"/>
 
     <!-- Listview to display slider menu -->
     <ListView
         android:id="@+id/list_slidermenu"
         android:layout_width="240dp"
         android:layout_height="match_parent"
+        android:layout_marginTop="120dp"
         android:layout_gravity="start"
         android:choiceMode="singleChoice"
         android:divider="@android:color/holo_green_dark"
         android:dividerHeight="1dp"
         android:background="@drawable/navigation_background"/>
 
-</android.support.v4.widget.DrawerLayout>
+</RelativeLayout>

@@ -8,4 +8,5 @@
         android:entries="@array/marken"
         android:entryValues="@array/marken_values"
         android:defaultValue="Bischofshof" />
+
 </PreferenceScreen>

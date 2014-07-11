@@ -58,6 +58,19 @@ public class FileUtilities {
         return dir.listFiles().length;
     }
 
+    public static ArrayList<String> getProjectNames(){
+        File[] folders = getAllFilesFromPath(FileUtilities.PFAD_PROJEKTE);
+
+        ArrayList<String> projectNames = new ArrayList<String>();
+
+        if(folders != null){
+            for(File file: folders){
+                projectNames.add(file.getName());
+            }
+        }
+        return projectNames;
+    }
+
     //Löscht den temporären Ordner der aktuellen Präsentation
     public static void emptyTempFolder() {
         File directory = new File(PFAD_PRAESENTATION);
