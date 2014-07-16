@@ -172,6 +172,7 @@ public class MainActivity extends Activity{
         }
         @Override
         protected String doInBackground(String... args) {
+            //TODO Kopieren wahrscheinlich nicht notwendig
             FileUtilities.emptyTempFolder();
             FileUtilities.addFilesToPresentationTemp(gewaehlteProjekte);
             return "";
@@ -187,6 +188,11 @@ public class MainActivity extends Activity{
                         public void onClick(View v) {
                             pdfView.recycle();
                             Intent i = new Intent(getApplicationContext(), SimpleFileViewActivity.class);
+                            File directory = new File(gewaehlteProjekte.get(0));
+                            File[] files = directory.listFiles();
+                            if(files.length>1){
+                                i.putExtra("nextFile", true);
+                            }
                             i.putExtra("file",firstFile.getAbsolutePath());
                             i.putExtra("filePaths",FileUtilities.getAbsolutePathsFromFolder(FileUtilities.PFAD_PRAESENTATION));
                             i.putExtra("presentationPath", FileUtilities.PFAD_PROJEKTE+"/"+navSpinner.getSelectedItem().toString());
@@ -249,7 +255,7 @@ public class MainActivity extends Activity{
             File directory = new File(gewaehlteProjekte.get(0));
             File[] files = directory.listFiles();
             for(File file: files) {
-                if(file.getName().matches("[1].*")) {
+                if(file.getName().matches("[10001].*")) {
                     firstFile = file;
                 }
             }

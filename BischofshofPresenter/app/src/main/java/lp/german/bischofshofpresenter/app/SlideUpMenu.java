@@ -25,6 +25,7 @@ import java.util.ArrayList;
 public class SlideUpMenu extends Activity{
 
     private FileUtilities fileUtilities = new FileUtilities();
+    private int index;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,8 @@ public class SlideUpMenu extends Activity{
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_slide_up_menu);
+
+        index = getIntent().getExtras().getInt("index");
 
         GetFilePathsAsyncTask getFilePathsAsyncTask = new GetFilePathsAsyncTask();
         getFilePathsAsyncTask.execute();
@@ -55,18 +58,11 @@ public class SlideUpMenu extends Activity{
 
     }
 
-    private void setupScrollViewContent(ArrayList<String> files){
-
-        //Die folgende Zeilen auskommentieren bei Test auf echtem Gerät, ist nur ersatzarray zum testen
-        /*files.add("TestObjekt1.pdf");
-        files.add("TestObjekt2.vid");
-        files.add("TestObjekt3.pdf");
-        files.add("TestObjekt4.vid");
-        files.add("TestObjekt5.pdf");
-        files.add("TestObjekt6.vid");*/
+    private void setupScrollViewContent(final ArrayList<String> files){
 
         for(int i = 0; i<files.size(); i++)
         {
+            final int position = i;
             final File currentFile = new File(files.get(i));
             String fileName = currentFile.getName();
             LayoutInflater vi = (LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -74,9 +70,9 @@ public class SlideUpMenu extends Activity{
 
             TextView textView = (TextView)v.findViewById(R.id.file_template_text);
             if(fileName.length()>10) {
-                textView.setText(fileName.substring(0, 10) + "...");
+                textView.setText(fileName.substring(2, 12) + "...");
             }else {
-                textView.setText(fileName);
+                textView.setText(fileName.substring(2));
             }
 
             ImageView imageView = (ImageView)v.findViewById(R.id.file_template_img);
@@ -95,6 +91,9 @@ public class SlideUpMenu extends Activity{
                 public void onClick(View v) {
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("path",currentFile.getAbsolutePath());
+
+                        returnIntent.putExtra("index", position);
+
                     setResult(RESULT_OK,returnIntent);
                     finish();
                 }

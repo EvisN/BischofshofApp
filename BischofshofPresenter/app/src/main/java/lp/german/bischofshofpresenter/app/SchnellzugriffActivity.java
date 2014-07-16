@@ -307,6 +307,7 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
         toast.show();
         Intent i = new Intent(getApplicationContext(), SimpleFileViewActivity.class);
         i.putExtra("file", file.getAbsolutePath());
+        i.putExtra("singleFile", true);
         startActivity(i);
     }
 

@@ -29,4 +29,12 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_simple_pdfview">SimplePDFViewActivity</string>
 
+    <string-array name="bearbeiten_menu">
+        <item>Bearbeiten</item>
+        <item>Umbenennen</item>
+        <item>Löschen</item>
+        <item>Versenden</item>
+        <item>Präsentieren</item>
+    </string-array>
+
 </resources>

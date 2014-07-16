@@ -1,7 +1,9 @@
 package lp.german.bischofshofpresenter.app;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -18,9 +20,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,12 +32,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import lp.german.bischofshofpresenter.app.util.ProjektItem;
 import lp.german.slidingmenu.adapter.NavDrawerListAdapter;
 import lp.german.slidingmenu.model.NavDrawerItem;
 
 
 public class GespeichertePraesentationenActivity extends Activity implements PopupMenu.OnMenuItemClickListener {
-    private DrawerLayout mDrawerLayout;
+    private RelativeLayout mDrawerLayout;
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
     private View mLinearLayout;
@@ -45,90 +50,122 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
     // used to store app title
     private CharSequence mTitle;
 
-
-    private ArrayList<NavDrawerItem> navDrawerItems;
-    private NavDrawerListAdapter adapter;
-
     private File[] filesList;
     private File clickedFile;
     private ArrayList<String> filePaths;
 
     private String mMarke;
+    private String selectedPath="";
+    private boolean[] selected;
+    private int FOLDER_ICON;
+
+    private ArrayList<ProjektItem> projektItems;
+    private ListView projektListe;
+    private ProjectListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_projekt_bearbeiten);
 
-        mTitle = mDrawerTitle = "<< Bitte Projekt wählen";
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
-        mFrame = (ImageView)findViewById(R.id.frame_screen);
-        mLinearLayout = findViewById(R.id.container);
+        setupUI();
 
         //Prüft welche Marke gewählt wurde und stellt Design ein
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         mMarke = sharedPref.getString(SettingsActivity.KEY_PREF_MARKE, "");
 
         if(mMarke.equals("pref_bischofshof")){
-            mFrame.setImageResource(R.drawable.frame_screen);
-            mLinearLayout.setBackgroundResource(R.drawable.skyline);
+            setDesignBischofshof();
         }else{
-            mFrame.setImageResource(R.drawable.frame_screen_wb);
-            mLinearLayout.setBackgroundColor(getResources().getColor(android.R.color.white));
+            setDesignWeltenburger();
         }
 
         //Liest die Projekte und deren Pfad
         filesList = FileUtilities.getAllFilesFromPath(FileUtilities.PFAD_PROJEKTE);
         filePaths = FileUtilities.getAbsolutePathsFromFolder(FileUtilities.PFAD_PROJEKTE);
-        addItems(filesList);
-
-    }
-
-
-    //Erstellt die Items für den Navigationdrawer und fügt sie hinzu
-    private void addItems(File[] files){
-        navDrawerItems = new ArrayList<NavDrawerItem>();
-
-        //Zeigt die Zahl der enthaltenen Dokumente an
-        int mCount = 0;
-        for(int i = 0; i<files.length; i++){
-            if(!files[i].getName().equals("Projekte")&&!files[i].getName().equals("tempCurrent")&&files[i].isDirectory()) {
-                mCount = FileUtilities.getNumberOfFilesFromPath(files[i].getAbsolutePath());
-                if (mCount == 0) {
-                    navDrawerItems.add(new NavDrawerItem(filePaths.get(i), files[i].getAbsolutePath()));
-                } else {
-                    navDrawerItems.add(new NavDrawerItem(filePaths.get(i), files[i].getAbsolutePath(), true, String.valueOf(mCount)));
-                }
-            }
+        selected = new boolean[filePaths.size()];
+        for(boolean b: selected){
+            b = false;
         }
 
-        //Binden an den ListAdapter
-        adapter = new NavDrawerListAdapter(getApplicationContext(),navDrawerItems, mMarke);
-        mDrawerList.setAdapter(adapter);
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+        addItemsToContainer(FileUtilities.PFAD_PROJEKTE);
+    }
 
-        //Aktivieren des Action Bar Icons als Toogle Button
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+    private void setDesignWeltenburger() {
+        mFrame.setImageResource(R.drawable.frame_screen_wb);
+        mLinearLayout.setBackgroundColor(getResources().getColor(android.R.color.white));
+        FOLDER_ICON = R.drawable.icon_ordner_wb;
+    }
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                R.drawable.ic_browse,
-                R.string.app_name,
-                R.string.app_name
-        ){
-            public void onDrawerClosed(View view) {
-                getActionBar().setTitle(mTitle);
-                invalidateOptionsMenu();
+    private void setDesignBischofshof() {
+        mFrame.setImageResource(R.drawable.frame_screen);
+        mLinearLayout.setBackgroundResource(R.drawable.skyline);
+        FOLDER_ICON = R.drawable.icon_ordner_bh;
+    }
+
+    private void setupUI() {
+        projektListe = (ListView)findViewById(R.id.projekt_list);
+        mDrawerLayout = (RelativeLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
+        mFrame = (ImageView)findViewById(R.id.frame_screen);
+        mLinearLayout = findViewById(R.id.container);
+
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(parent.getItemAtPosition(position).toString().equals("Bearbeiten")){
+
+                    return;
+                }
+                if(parent.getItemAtPosition(position).toString().equals("Umbenennen")){
+                    Toast t = Toast.makeText(getApplicationContext(), "Umbenennen", Toast.LENGTH_SHORT);
+                    t.show();
+                    callRenameDialog();
+                    return;
+                }
+                if(parent.getItemAtPosition(position).toString().equals("Löschen")){
+
+                    return;
+                }
+                if(parent.getItemAtPosition(position).toString().equals("Versenden")){
+
+                    return;
+                }
+                if(parent.getItemAtPosition(position).toString().equals("Präsentieren")){
+
+                    return;
+                }
             }
+        });
+    }
 
-            public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
-                invalidateOptionsMenu();
+    private void callRenameDialog(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Umbenennen");
+        alert.setMessage("Neuen Namen eingeben");
+
+        // Set an EditText view to get user input
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String value = input.getText().toString();
+                File file = new File(selectedPath);
+                File fileNew = new File(FileUtilities.PFAD_PROJEKTE+"/"+value);
+                Log.d("RENAME WAS: ", String.valueOf(file.renameTo(fileNew)));
+                addItemsToContainer(FileUtilities.PFAD_PROJEKTE);
             }
-        };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+        alert.show();
     }
 
     //Fängt Backbutton ab und finished dann die Activity nachdem die gewählten Projekte an den Intent angehängt wurden
@@ -143,41 +180,15 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
     //Gibt die im Drawer gewählten Pfade zurück
     private ArrayList<String> getSelectedPaths(){
         ArrayList<String> paths = new ArrayList<String>();
-
-        for(int i = 0; i<navDrawerItems.size();i++){
-            if(navDrawerItems.get(i).isItemChecked()){
-                paths.add(navDrawerItems.get(i).getAbsolutePath());
+        for(int i=0;i<selected.length;i++){
+            if(selected[i]){
+                paths.add(FileUtilities.PFAD_PROJEKTE+"/"+filePaths.get(i));
             }
         }
-
         Collections.reverse(paths);
-
         return paths;
     }
 
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            NavDrawerItem item = (NavDrawerItem)adapter.getItem(position);
-
-            //Setzt den Titel der Activity auf die gewählte Kategorie
-            mTitle = item.getTitle();
-
-            try {
-                //Fügt die Dateien aus dem geklickten Ordner in der Ansicht rechts hinzu
-                //Im Moment nur zum einzeln öffnen
-                addItemsToContainer(item.getAbsolutePath());
-            }catch (Exception e){
-
-            }
-
-            //Checkt oder Unchecked das Item
-            mDrawerList.setItemChecked(position, item.isItemChecked() ? false : true);
-            item.setChecked();
-            mDrawerLayout.closeDrawers();
-        }
-    }
 
     //Füllt Container mit den Dateien des ausgewählten Ordners
     private void addItemsToContainer(String path){
@@ -187,8 +198,10 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
         ViewGroup group = (ViewGroup) mLinearLayout;
         group.removeAllViews();
 
+        projektItems = new ArrayList<ProjektItem>();
         for(int i = 0; i<files.length; i++)
         {
+            final int index = i;
             Log.d("FILE:",files[i].getName());
             final File currentFile = files[i];
             String fileName = currentFile.getName();
@@ -196,27 +209,39 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
             View v = vi.inflate(R.layout.file_template, null);
 
             TextView textView = (TextView)v.findViewById(R.id.file_template_text);
-            textView.setText(fileName.substring(0, 10)+"...");
+            if(fileName.length()>10) {
+                textView.setText(fileName.substring(0, 12) + "...");
+            }else {
+                textView.setText(fileName.substring(0));
+            }
 
             ImageView imageView = (ImageView)v.findViewById(R.id.file_template_img);
 
-            if(FileUtilities.getFileExtension(fileName).equals("pdf")){
-                imageView.setImageResource(R.drawable.pdf2);
-            }else {
-                imageView.setImageResource(R.drawable.video);
-            }
+            imageView.setImageResource(FOLDER_ICON);
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     clickedFile = currentFile;
-                    showPopup(v);
+                    selectedPath = currentFile.getAbsolutePath();
+                    v.setBackgroundColor(selected[index] ? 0x00AAAAAA : 0xFFAAAAAA);
+                    selected[index] = !selected[index];
                 }
             });
 
             mLinearLayout = findViewById(R.id.container);
             group.addView(v);
+            projektItems.add(new ProjektItem(fileName, currentFile.getAbsolutePath()));
         }
+        adapter = new ProjectListAdapter(this, projektItems);
+        projektListe.setAdapter(adapter);
+        projektListe.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ProjektItem projektItem = projektItems.get(position);
+                selectedPath = projektItem.getAbsolutePath();
+            }
+        });
     }
 
     @Override
@@ -258,53 +283,9 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // toggle nav drawer on selecting action bar app icon/title
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        // Handle action bar actions click
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    /***
-     * Called when invalidateOptionsMenu() is triggered
-     */
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // if nav drawer is opened, hide the action items
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
     public void setTitle(CharSequence title) {
         mTitle = title;
         getActionBar().setTitle(mTitle);
     }
 
-    /**
-     * When using the ActionBarDrawerToggle, you must call it during
-     * onPostCreate() and onConfigurationChanged()...
-     */
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        // Pass any configuration change to the drawer toggls
-        mDrawerToggle.onConfigurationChanged(newConfig);
-    }
 }

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by paullichtenberger on 28.05.14.
@@ -42,6 +43,8 @@ public class FileUtilities {
                 filePaths.add(filesList[i].getName());
             }
         }
+
+        Collections.sort(filePaths,String.CASE_INSENSITIVE_ORDER);
 
         return filePaths;
     }
@@ -92,8 +95,11 @@ public class FileUtilities {
 
             File[] files = directory.listFiles();
 
-            for (File file : files) {
-                copyFilesFromPathToPath(new File(file.getAbsolutePath()), new File(PFAD_PRAESENTATION + "/"+ file.getName()));
+            for (int i= 0; i<files.length;i++) {
+                File file = files[i];
+                File zielFile = new File(PFAD_PRAESENTATION + "/"+String.valueOf(i)+ file.getName());
+                Log.d("FILEVERGLIECH", file.getName() + "  "+zielFile.getName());
+                copyFilesFromPathToPath(file, zielFile);
             }
 
         }

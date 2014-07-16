@@ -19,8 +19,10 @@ import android.widget.VideoView;
 
 import com.joanzapata.pdfview.PDFView;
 import com.joanzapata.pdfview.listener.OnLoadCompleteListener;
+import com.joanzapata.pdfview.listener.OnPageChangeListener;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class SimpleFileViewActivity extends Activity{
 
@@ -29,6 +31,13 @@ public class SimpleFileViewActivity extends Activity{
     private ProgressDialog dialog;
     private File file;
     private ImageButton menuButton;
+    private ArrayList<String> filepaths;
+    private boolean hasNextFile, hasPreviousFile;
+    private ImageView previous, next;
+    private String nextPath, previousPath;
+    private int currentFileIndex, lastIndex = 0;
+    private int nOfElements;
+    private boolean isSingleFile = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,54 +47,120 @@ public class SimpleFileViewActivity extends Activity{
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_simple_fileview);
 
-        setupUI(this);
+        if(getIntent().hasExtra("singleFile")) {
+            isSingleFile = true;
+        }
 
-        startFile();
+        setupUI(this);
+        setListeners(this);
+        startFile(false);
 
     }
 
-    private void startFile() {
+    private void setMultiFileView() {
+        filepaths = getIntent().getStringArrayListExtra("filePaths");
+        nOfElements = filepaths.size();
+        file = new File(FileUtilities.PFAD_PRAESENTATION + "/" + filepaths.get(currentFileIndex));
+    }
+
+    private void setSingleFileView() {
+        isSingleFile = true;
+        file = new File(getIntent().getExtras().get("file").toString());
+        menuButton.setVisibility(View.INVISIBLE);
+    }
+
+    private void startFile(Boolean previousFileClicked) {
+        if(isSingleFile){
+            setSingleFileView();
+        }else {
+            setMultiFileView();
+        }
+
+        lastIndex = currentFileIndex;
         if(FileUtilities.getFileExtension(file.getName()).equals("pdf")) {
 
             //new loadPDFTask(this).execute(file);
             mPdfView.setVisibility(View.VISIBLE);
-            setupPDFView();
+            if(!isSingleFile) {
+                setupPDFView(file, previousFileClicked);
+            } else{
+                if(file!=null){
+                    setupPDFView(file, false);
+                }
+            }
             mVideoView.setVisibility(View.GONE);
+            checkPage(mPdfView.getCurrentPage());
 
         }else{
             try{
                 mVideoView.setVisibility(View.VISIBLE);
                 mPdfView.setVisibility(View.GONE);
-                Uri uri = Uri.parse(file.getAbsolutePath());
+                Uri uri;
+                uri = Uri.parse(file.getAbsolutePath());
                 mVideoView.setVideoURI(uri);
                 mVideoView.requestFocus();
                 mVideoView.start();
+                if(currentFileIndex<nOfElements-1){
+                    next.setVisibility(View.VISIBLE);
+                }else {
+                    next.setVisibility(View.GONE);
+                }
+                if(currentFileIndex!=0){
+                    previous.setVisibility(View.VISIBLE);
+                }else {
+                    previous.setVisibility(View.GONE);
+                }
             }catch (Exception e){
                 Log.e("Fehler", "Video konnte nicht geladen werden");
             }
         }
     }
 
-    private void setupPDFView() {
+    private void setupPDFView(File newFile, final Boolean previousFileClicked) {
         dialog = new ProgressDialog(this);
         dialog.setMessage("Loading PDF...");
-        mPdfView.fromFile(file)
+        final Boolean pre = previousFileClicked;
+        mPdfView.fromFile(newFile)
                 .defaultPage(1)
                 .showMinimap(false)
                 .enableSwipe(true)
                 .onLoad(new OnLoadCompleteListener() {
                     @Override
                     public void loadComplete(int nbPages) {
+                        if(pre){
+                            mPdfView.jumpTo(nbPages);
+                        }
                         dialog.dismiss();
+                    }
+                })
+                .onPageChange(new OnPageChangeListener() {
+                    @Override
+                    public void onPageChanged(int page, int pageCount) {
+                        checkPage(page);
                     }
                 })
                 .load();
     }
 
+    private void checkPage(int page){
+
+        if(page==mPdfView.getPageCount()&&currentFileIndex<nOfElements-1){
+            next.setVisibility(View.VISIBLE);
+        }else {
+            next.setVisibility(View.GONE);
+        }
+        if(page==1&&currentFileIndex!=0){
+            previous.setVisibility(View.VISIBLE);
+        }else {
+            previous.setVisibility(View.GONE);
+        }
+    }
+
     @Override
     protected void onResume(){
         super.onResume();
-        startFile();
+
+        startFile(false);
     }
 
     private void setupUI(Context ctx) {
@@ -96,57 +171,46 @@ public class SimpleFileViewActivity extends Activity{
         mPdfView = (PDFView) findViewById(R.id.pdfview);
         menuButton = (ImageButton)findViewById(R.id.menuButton);
         mVideoView = (VideoView)findViewById(R.id.videoview);
+        previous = (ImageView)findViewById(R.id.previous_file);
+        next = (ImageView)findViewById(R.id.next_file);
+    }
+
+    private void setListeners(final Context context) {
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(context,SlideUpMenu.class);
-                i.putStringArrayListExtra("filePaths", getIntent().getStringArrayListExtra("filePaths"));
+                i.putStringArrayListExtra("filePaths", filepaths);
+                i.putExtra("index", currentFileIndex);
                 startActivityForResult(i,1);
+            }
+        });
+
+        previous.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(currentFileIndex!=0){
+                    mPdfView.recycle();
+                    currentFileIndex--;
+                    startFile(true);
+                }
+            }
+        });
+
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(currentFileIndex!=nOfElements-1){
+                    mPdfView.recycle();
+                    currentFileIndex++;
+                    startFile(false);
+                }
             }
         });
     }
 
-    /*
-    //lädt PDF asynchron und zeigt ProgressDialog an
-    private class loadPDFTask extends AsyncTask<Object,String,File> {
-
-        private Context context;
-
-
-        public loadPDFTask(Context ctx){
-            context = ctx;
-            dialog = new ProgressDialog(context);
-            dialog.setMessage("Loading PDF...");
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            dialog.show();
-        }
-        @Override
-        protected File doInBackground(Object... args) {
-            File file = (File)args[0];
-            mPdfView.fromFile(file)
-                    .defaultPage(1)
-                    .showMinimap(false)
-                    .enableSwipe(true)
-                    .load();
-            return file;
-        }
-        @Override
-        protected void onPostExecute(File unused) {
-            super.onPostExecute(unused);
-            if(dialog!=null) {
-                dialog.dismiss();
-            }
-        }
-    }
-    */
-
     @Override
     public void onPause(){
-
         super.onPause();
         if(dialog != null)
             dialog.dismiss();
@@ -183,45 +247,19 @@ public class SimpleFileViewActivity extends Activity{
         switch (requestCode){
             case 1 :
                 if(resultCode == RESULT_OK){
-                    file = new File(getIntent().getStringExtra("presentationPath")+data.getExtras().getString("path"));
-                    startFile();
+                    currentFileIndex=data.getExtras().getInt("index");
+                    if(lastIndex<currentFileIndex) {
+                        startFile(false);
+                    }else {
+                        startFile(true);
+                    }
                 }
                 if (resultCode == RESULT_CANCELED) {
                     //Write your code if there's no result
                 }
                 break;
-
             default:
                 break;
         }
     }
-
-    /*@Override
-    public void onSwipe(int direction) {
-        String str = "";
-
-        switch (direction) {
-            case SimpleGestureFilter.SWIPE_RIGHT :
-                str = "Swipe Right";
-                break;
-            case SimpleGestureFilter.SWIPE_LEFT :
-                str = "Swipe Left";
-                break;
-            case SimpleGestureFilter.SWIPE_DOWN :
-                str = "Swipe Down";
-                break;
-            case SimpleGestureFilter.SWIPE_UP :
-                str = "Swipe Up";
-                Intent i = new Intent(this,SlideUpMenu.class);
-                i.putStringArrayListExtra("filePaths", getIntent().getStringArrayListExtra("filePaths"));
-                startActivityForResult(i,1);
-                break;
-        }
-        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onDoubleTap() {
-        //momentan unnötig
-    }*/
 }

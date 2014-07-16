@@ -1,4 +1,4 @@
-<android.support.v4.widget.DrawerLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
@@ -12,6 +12,9 @@
         android:padding="50dp"
         android:orientation="horizontal"
         android:background="@drawable/skyline"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="240dp"
+        android:visibility="gone"
         />
 
 
@@ -23,6 +26,7 @@
         android:scaleType="fitXY"
         />
 
+
     <!-- Listview to display slider menu -->
     <ListView
         android:id="@+id/list_slidermenu"
@@ -32,6 +36,16 @@
         android:choiceMode="multipleChoice"
         android:divider="@android:color/holo_green_dark"
         android:dividerHeight="1dp"
-        android:background="@drawable/navigation_background"/>
+        android:background="@drawable/navigation_background"
+        android:entries="@array/bearbeiten_menu"/>
 
-</android.support.v4.widget.DrawerLayout>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@id/list_slidermenu"
+        android:id="@+id/projekt_list"
+        android:padding="50dp"
+        />
+
+
+</RelativeLayout>
