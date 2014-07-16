@@ -130,11 +130,14 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:id="@+id/datei_explorer">
-            <Button
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:text="DummyButton zum test des Addmenues"
-                android:id="@+id/btn_dummy"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:id="@+id/childFile"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content">
+
+             </LinearLayout>
         </ScrollView>
     </RelativeLayout>
 
@@ -164,7 +167,16 @@
             android:layout_height="fill_parent"
             android:layout_toRightOf="@id/btn_scroll_left"
             android:layout_toLeftOf="@id/btn_scroll_right"
-            android:id="@+id/praesentations_explorer"/>
+            android:id="@+id/praesentations_explorer">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:id="@+id/explorer_file"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content">
+
+            </LinearLayout>
+            </ScrollView>
 
     </RelativeLayout>
 
