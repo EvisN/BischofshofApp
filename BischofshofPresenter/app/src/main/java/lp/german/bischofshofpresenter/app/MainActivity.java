@@ -79,7 +79,8 @@ public class MainActivity extends Activity{
     private void setupSpinner(final Context ctx) {
         final Context context = ctx;
         navSpinner = (Spinner)findViewById(R.id.nav_spinner);
-        navSpinnerAdapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, FileUtilities.getProjectNames());
+        navSpinnerAdapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item, FileUtilities.getProjectNames());
+        navSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         navSpinner.setAdapter(navSpinnerAdapter);
         navSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
