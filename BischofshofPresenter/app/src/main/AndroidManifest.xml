@@ -57,6 +57,11 @@
             android:name=".SimpleFileViewActivity"
             android:label="@string/title_activity_simple_pdfview" >
         </activity>
+        <activity
+            android:name=".SeiteWaehlenActivity"
+            android:label="SeiteWaehlenActivity"
+            >
+        </activity>
 
 
     </application>

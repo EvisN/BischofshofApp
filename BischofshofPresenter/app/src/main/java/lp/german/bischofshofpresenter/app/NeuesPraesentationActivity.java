@@ -48,7 +48,7 @@ public class NeuesPraesentationActivity extends Activity {
     private Button dummy_button;
 
     //Flags
-    private boolean BISCHOFSHOF_GEWAEHLT = true;
+    private boolean BISCHOFSHOF_GEWAEHLT = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +87,7 @@ public class NeuesPraesentationActivity extends Activity {
         FOLDER_ICON = R.drawable.icon_ordner_bh;
         mLinearLayout = findViewById(R.id.childFile);
         layoutExplorerFile = findViewById(R.id.explorer_file);
+        currentPresentation = new ArrayList<Object>();
 
 
     }
@@ -175,7 +176,6 @@ public class NeuesPraesentationActivity extends Activity {
         //Hier die ganze gewählte Folie zur Präsentation hinzufuegen
 
         ViewGroup group = (ViewGroup) layoutExplorerFile;
-        currentPresentation = new ArrayList<Object>();
         currentPresentation.add(clickedFile);
         String fileName = clickedFile.getName();
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -207,7 +207,30 @@ public class NeuesPraesentationActivity extends Activity {
         //Hier nur Bestimmte Seiten zur Präsentation hinzufuegen
         Intent i = new Intent(getApplicationContext(), SeiteWaehlenActivity.class);
         i.putExtra("file", clickedFile);
-        startActivity(i);
+        startActivityForResult(i, 1);
+    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (resultCode == RESULT_OK) {
+            File file = new File(FileUtilities.PFAD_ROOT+"/tempImages/tempPDF.pdf");
+            ViewGroup group = (ViewGroup) layoutExplorerFile;
+            currentPresentation.add(file);
+            String fileName = file.getName();
+            LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View v = vi.inflate(R.layout.file_template, null);
+            TextView textView = (TextView) v.findViewById(R.id.file_template_text);
+            if (fileName.length() > 10) {
+                textView.setText(fileName.substring(0, 10) + "...");
+            } else {
+                textView.setText(fileName);
+            }
+
+            ImageView imageView = (ImageView) v.findViewById(R.id.file_template_img);
+            imageView.setImageResource(R.drawable.pdf2);
+
+            layoutExplorerFile = findViewById(R.id.explorer_file);
+            group.addView(v);
+
+        }
     }
 
     private void savePresentation() {
@@ -306,7 +329,7 @@ public class NeuesPraesentationActivity extends Activity {
             }
 
             //Ausschluss vom Projekt und Präsentationsordner und Dateien
-            if (!files[i].getName().equals("Projekte") && !files[i].getName().equals("tempCurrent") && files[i].isDirectory()) {
+            if (!files[i].getName().equals("Projekte") && !files[i].getName().equals("tempCurrent") && files[i].isDirectory() && !files[i].getName().equals("tempImages")) {
 
                 if (mCount == 0) {
                     navDrawerItems.add(new NavDrawerItem(files[i].getName(), files[i].getAbsolutePath()));
@@ -317,5 +340,20 @@ public class NeuesPraesentationActivity extends Activity {
 
             mCount = 0;
         }
+    }
+
+    //Verwenden damit Inhalt von tempImages gelöscht wird
+    public static boolean deleteDir(File dir) {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i=0; i<children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+
+        return dir.delete();
     }
 }

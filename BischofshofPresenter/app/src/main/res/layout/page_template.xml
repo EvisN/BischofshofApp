@@ -1,39 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/choose_page_linear_layout"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="false">
 
-    <com.joanzapata.pdfview.PDFView
-        android:id="@+id/pdfview_single_page"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="10dp"
-        android:background="@android:color/transparent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/img_single_page" />
+
     <TextView
-        android:layout_width="265dp"
+        android:layout_width="93dp"
         android:layout_height="98dp"
-        android:text="Platzhalter"
         android:textColor="@android:color/black"
         android:id="@+id/page_template_text"
         android:layout_below="@+id/pdfview_single_page"
         android:layout_alignLeft="@+id/pdfview_single_page"
         android:layout_alignStart="@+id/pdfview_single_page"
-        android:layout_toLeftOf="@+id/btnChoosePage"
-        android:layout_toStartOf="@+id/btnChoosePage" />
+        android:layout_toLeftOf="@+id/cbChoose_single_page"
+        android:layout_toStartOf="@+id/cbChoose_single_page" />
 
-    <Button
+    <CheckBox
         android:layout_width="92dp"
         android:layout_height="wrap_content"
-        android:text="Choose"
-        android:id="@+id/btnChoosePage"
+        android:id="@+id/cbChoose_single_page"
         android:layout_alignTop="@+id/pdfview_single_page"
         android:layout_toRightOf="@+id/pdfview_single_page"
-        android:layout_toEndOf="@+id/pdfview_single_page" />
+        android:layout_toEndOf="@+id/pdfview_single_page"
+        android:checked="true"
+        android:clickable="true"
+        android:enabled="true" />
 
-</RelativeLayout>
+</LinearLayout>
