@@ -20,6 +20,10 @@ import android.widget.TextView;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfCopy;
+import com.itextpdf.text.pdf.PdfImportedPage;
+import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.qrcode.ByteArray;
 import com.sun.pdfview.PDFFile;
@@ -57,6 +61,7 @@ public class SeiteWaehlenActivity extends Activity {
 
 
     File file = null;
+    String fileName = "";
     LinearLayout relLayoutMain;
     int countPages = 0;
     ArrayList<String> choosenPageURLs;
@@ -69,6 +74,7 @@ public class SeiteWaehlenActivity extends Activity {
         setContentView(R.layout.activity_choose_page);
         Intent i = getIntent();
         file = (File) i.getExtras().get("file");
+        fileName = file.getName();
 
         //Settings
         PDFImage.sShowImages = true; // show images
@@ -84,11 +90,13 @@ public class SeiteWaehlenActivity extends Activity {
     }
     private void setupUI(){
         Button btnOk =  (Button) findViewById(R.id.btnOk_single_page);
+        TextView txtDocName = (TextView) findViewById(R.id.txtDocumentName_single_page);
+        txtDocName.setText(fileName);
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                choosenPageURLs.toString();
-                mergeToPDF();
+
+                mergePages();
             }
         });
     }
@@ -100,9 +108,10 @@ public class SeiteWaehlenActivity extends Activity {
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = vi.inflate(R.layout.page_template, null);
         CheckBox cbChoose = (CheckBox) v.findViewById(R.id.cbChoose_single_page);
-        TextView textView = (TextView) v.findViewById(R.id.page_template_text);
+        //TextView textView = (TextView) v.findViewById(R.id.page_template_text);
         ImageView pdfPageImage = (ImageView) v.findViewById(R.id.img_single_page);
-        textView.setText("Seite " + pageNumber);
+        cbChoose.setText("Seite " + pageNumber);
+       // textView.setText("Seite " + pageNumber);
         checkBoxes.add(cbChoose);
         cbChoose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,9 +128,9 @@ public class SeiteWaehlenActivity extends Activity {
         });
 
 
-        Bitmap bp = BitmapFactory.decodeFile(FileUtilities.PFAD_ROOT + "tempImages/" + "tempPage" + pageNumber + ".jpeg");
+        Bitmap bp = BitmapFactory.decodeFile(FileUtilities.PFAD_ROOT + "tempImages/tempPage" + pageNumber + ".jpeg");
         pdfPageImage.setImageBitmap(bp);
-        group.addView(v, 0);
+        group.addView(v);
     }
 
 
@@ -178,9 +187,9 @@ public class SeiteWaehlenActivity extends Activity {
 
                             File myDir = new File(FileUtilities.PFAD_ROOT + "tempImages");
                             myDir.mkdirs();
-                            File outputFile = new File(myDir, "TempPage" + i + ".jpeg");
-                            allPageURLs.add( FileUtilities.PFAD_ROOT + "tempImages/TempPage" + i + ".jpeg");
-                            choosenPageURLs.add( FileUtilities.PFAD_ROOT + "tempImages/TempPage" + i + ".jpeg");
+                            File outputFile = new File(myDir, "tempPage" + i + ".jpeg");
+                            allPageURLs.add( FileUtilities.PFAD_ROOT + "tempImages/tempPage" + i + ".jpeg");
+                            choosenPageURLs.add( FileUtilities.PFAD_ROOT + "tempImages/tempPage" + i + ".jpeg");
                             FileOutputStream out = new FileOutputStream(outputFile);
                             page.compress(Bitmap.CompressFormat.JPEG, 50, out);
 
@@ -203,11 +212,40 @@ public class SeiteWaehlenActivity extends Activity {
 
     }
 
+    private void mergePages(){
+
+        ArrayList<Integer> indexSelectedPages = new ArrayList<Integer>();
+
+        for(int i = 0;i<checkBoxes.size();i++){
+            if(checkBoxes.get(i).isChecked()){
+                indexSelectedPages.add(i);
+            }
+        }
+        int size = indexSelectedPages.size();
+        try {
+            PdfReader reader = new PdfReader(file.getAbsolutePath());
+            Document document = new Document();
+            PdfCopy copy = new PdfCopy(document, new FileOutputStream(FileUtilities.PFAD_ROOT + "tempImages/EDIT_"+fileName));
+
+            document.open();
+            for (int i = 1;i<=size;i++){
+               copy.addPage(copy.getImportedPage(reader, i));            }
+               document.close();
+        }catch(Exception e){
+
+        }
+        Intent i = new Intent();
+        i.putExtra("fileName", fileName);
+        setResult(RESULT_OK,i);
+        finish();
+
+    }
+
     private void mergeToPDF(){
         try {
             Document document = new Document();
 
-            PdfWriter.getInstance(document, new FileOutputStream(FileUtilities.PFAD_ROOT + "tempImages/tempPDF.pdf"));
+            PdfWriter.getInstance(document, new FileOutputStream(FileUtilities.PFAD_ROOT + "tempImages/EDIT_"+fileName));
             document.open();
             for (int i = 0;i<choosenPageURLs.size();i++){
                 File file = new File(choosenPageURLs.get(i));
@@ -233,6 +271,7 @@ public class SeiteWaehlenActivity extends Activity {
         }catch(Exception e){
 
         }
+
         setResult(RESULT_OK);
         finish();
 

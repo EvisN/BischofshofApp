@@ -64,9 +64,9 @@
 
         <ImageButton
             android:layout_width="fill_parent"
-            android:layout_height="120dp"
+            android:layout_height="90dp"
             android:layout_alignParentBottom="true"
-            android:background="@android:color/holo_blue_light"
+            android:background="@drawable/btn_speichern"
             android:id="@+id/btn_speichern"
             />
 

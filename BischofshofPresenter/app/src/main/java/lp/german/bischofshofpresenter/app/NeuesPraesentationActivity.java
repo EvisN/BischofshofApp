@@ -5,14 +5,18 @@ package lp.german.bischofshofpresenter.app;
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -20,6 +24,11 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -38,7 +47,7 @@ public class NeuesPraesentationActivity extends Activity {
     private File clickedFile;
     private ArrayList<NavDrawerItem> navDrawerItems;
 
-    private ArrayList<Object> currentPresentation;
+    private ArrayList<File> currentPresentation;
 
 
     //Menu
@@ -54,10 +63,23 @@ public class NeuesPraesentationActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_neues_projekt);
-
         setupUI();
         setupClickListeners();
-        addItemsToContainer(FileUtilities.PFAD_WB);
+
+
+        if(getIntent().getExtras() != null){
+            Intent intent = getIntent();
+            String path = intent.getStringExtra("projectPath");
+            addItemsToContainer(FileUtilities.PFAD_BH);
+            File[] fList = FileUtilities.getAllFilesFromPath(path);
+            for(int i = 0;i<fList.length;i++){
+                addFileToExplorer(fList[i]);
+            }
+
+        } else{
+            addItemsToContainer(FileUtilities.PFAD_BH);
+        }
+
     }
 
     private void setupUI() {
@@ -87,7 +109,7 @@ public class NeuesPraesentationActivity extends Activity {
         FOLDER_ICON = R.drawable.icon_ordner_bh;
         mLinearLayout = findViewById(R.id.childFile);
         layoutExplorerFile = findViewById(R.id.explorer_file);
-        currentPresentation = new ArrayList<Object>();
+        currentPresentation = new ArrayList<File>();
 
 
     }
@@ -174,10 +196,14 @@ public class NeuesPraesentationActivity extends Activity {
 
     private void fuegeFolieHinzu() {
         //Hier die ganze gewählte Folie zur Präsentation hinzufuegen
-
-        ViewGroup group = (ViewGroup) layoutExplorerFile;
         currentPresentation.add(clickedFile);
-        String fileName = clickedFile.getName();
+        addFileToExplorer(clickedFile);
+
+
+    }
+    private void addFileToExplorer(File file){
+        ViewGroup group = (ViewGroup) layoutExplorerFile;
+        String fileName = file.getName();
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = vi.inflate(R.layout.file_template, null);
         TextView textView = (TextView) v.findViewById(R.id.file_template_text);
@@ -198,9 +224,16 @@ public class NeuesPraesentationActivity extends Activity {
                 imageView.setImageResource(FOLDER_ICON);
             }
         }
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
         layoutExplorerFile = findViewById(R.id.explorer_file);
         group.addView(v);
-
     }
 
     private void fuegeFolienseitenHinzu() {
@@ -211,7 +244,8 @@ public class NeuesPraesentationActivity extends Activity {
     }
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (resultCode == RESULT_OK) {
-            File file = new File(FileUtilities.PFAD_ROOT+"/tempImages/tempPDF.pdf");
+            String fName = intent.getStringExtra("fileName");
+            File file = new File(FileUtilities.PFAD_ROOT+"/tempImages/EDIT_"+fName);
             ViewGroup group = (ViewGroup) layoutExplorerFile;
             currentPresentation.add(file);
             String fileName = file.getName();
@@ -235,6 +269,7 @@ public class NeuesPraesentationActivity extends Activity {
 
     private void savePresentation() {
         //Hier wird die Präsentation gespeichert
+        saveDialog();
     }
 
     private void addItemsToContainer(String path) {
@@ -245,7 +280,7 @@ public class NeuesPraesentationActivity extends Activity {
         group.removeAllViews();
 
         for (int i = 0; i < files.length; i++) {
-            if (!files[i].getName().equals("tempCurrent") && !files[i].getName().equals("Projekte")) {
+            if (!files[i].getName().equals("tempCurrent") && !files[i].getName().equals("Projekte")&& !files[i].getName().equals("tempImages")) {
                 final File currentFile = files[i];
                 String fileName = currentFile.getName();
                 LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -343,17 +378,81 @@ public class NeuesPraesentationActivity extends Activity {
     }
 
     //Verwenden damit Inhalt von tempImages gelöscht wird
-    public static boolean deleteDir(File dir) {
-        if (dir.isDirectory()) {
-            String[] children = dir.list();
-            for (int i=0; i<children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
-                if (!success) {
-                    return false;
-                }
-            }
+    //TODO Methode ändern
+    public void deleteFilesFromDir(String filePath) {
+        File fileOrDirectory = new File(filePath);
+        if (fileOrDirectory.isDirectory())
+            for (File child : fileOrDirectory.listFiles())
+               // deleteFilesFromDir(child);
+
+        fileOrDirectory.delete();
+
+    }
+
+    public void copyDirectory(ArrayList<File> sourceFiles, String newProjectName)
+    {
+         File destinationFolder = new File(FileUtilities.PFAD_PROJEKTE +"/"+ newProjectName);
+        if (!destinationFolder.exists()) {
+            destinationFolder.mkdir();
         }
 
-        return dir.delete();
+
+            for (int i=0; i<sourceFiles.size(); i++) {
+                File source = sourceFiles.get(i);
+
+                String sourcePath = source.getAbsolutePath();
+
+                String destinationPath = destinationFolder+"/"+source.getName();
+
+
+                try
+                {
+                    InputStream in = new FileInputStream(sourcePath);
+                    OutputStream out = new FileOutputStream(destinationPath);
+
+                    // Copy the bits from instream to outstream
+                    byte[] buf = new byte[1024];
+                    int len;
+                    while ((len = in.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
+                    in.close();
+                    out.close();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+
+        }
+    private void saveDialog(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Präsentation Speichern");
+        alert.setMessage("Neuen Namen eingeben");
+
+        // Set an EditText view to get user input
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String value = input.getText().toString();
+                copyDirectory(currentPresentation, value);
+
+                //deleteFilesFromDir(FileUtilities.PFAD_ROOT + "tempImages");
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+        alert.show();
     }
-}
+    }
+
