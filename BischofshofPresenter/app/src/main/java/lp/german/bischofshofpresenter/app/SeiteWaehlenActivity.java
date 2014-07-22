@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,6 +69,7 @@ public class SeiteWaehlenActivity extends Activity {
     ArrayList<String> choosenPageURLs;
     ArrayList<String> allPageURLs;
     ArrayList<CheckBox> checkBoxes;
+    int count = 1;
 
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -125,11 +127,14 @@ public class SeiteWaehlenActivity extends Activity {
     }
     private void setupPages(Bitmap bmp, int pageNumber) {
 
-        relLayoutMain = (LinearLayout) findViewById(R.id.choose_page_layout);
+        relLayoutMain = (LinearLayout) findViewById(R.id.content_single_page);
         ViewGroup group = (ViewGroup) relLayoutMain;
 
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = vi.inflate(R.layout.page_template, null);
+        LinearLayout llPreview = (LinearLayout)v.findViewById(R.id.choose_page_linear_layout);
+       // llPreview.setId(count);
+
         CheckBox cbChoose = (CheckBox) v.findViewById(R.id.cbChoose_single_page);
         TextView textView = (TextView) v.findViewById(R.id.page_template_text);
         ImageView pdfPageImage = (ImageView) v.findViewById(R.id.img_single_page);
@@ -152,7 +157,14 @@ public class SeiteWaehlenActivity extends Activity {
 
         Bitmap bp = BitmapFactory.decodeFile(FileUtilities.PFAD_ROOT + "tempImages/tempPage" + pageNumber + ".jpeg");
         pdfPageImage.setImageBitmap(bp);
-        group.addView(v,0);
+
+
+
+
+        group.addView(v);
+
+
+        count++;
     }
 
 
@@ -195,9 +207,7 @@ public class SeiteWaehlenActivity extends Activity {
                         // create a pdf doc
                         PDFFile pdf = new PDFFile(bb);
                         //Get the first page from the pdf doc
-                        //PDFPage pdfPage = pdf.getPage(1, true);
                         //create a scaling value according to the WebView Width
-                        //final float scale = viewSize / pdfPage.getWidth() * 0.95f;
                         final float scale = 1;
                         //convert the page into a bitmap with a scaling value
                         countPages = pdf.getNumPages();
@@ -205,7 +215,7 @@ public class SeiteWaehlenActivity extends Activity {
                         //loop through the rest of the pages and repeat the above
                         for (int i = 1; i <= pdf.getNumPages(); i++) {
                             PDFPage PDFpage = pdf.getPage(i, true);
-                            Bitmap page = PDFpage.getImage((int) (PDFpage.getWidth() * scale), (int) (PDFpage.getHeight() * scale), null, true, true);
+                            Bitmap page = PDFpage.getImage((int) (PDFpage.getWidth() * scale)/3, (int) (PDFpage.getHeight() * scale)/3, null, true, true);
 
                             File myDir = new File(FileUtilities.PFAD_ROOT + "tempImages");
                             myDir.mkdirs();

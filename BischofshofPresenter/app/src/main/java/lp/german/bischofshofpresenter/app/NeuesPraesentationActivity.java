@@ -50,7 +50,9 @@ public class NeuesPraesentationActivity extends Activity {
     private File clickedFile;
     private ArrayList<NavDrawerItem> navDrawerItems;
 
+
     private ArrayList<File> currentPresentation;
+
 
 
     //Menu
@@ -205,10 +207,14 @@ public class NeuesPraesentationActivity extends Activity {
 
     }
     private void addFileToExplorer(File file){
+
         ViewGroup group = (ViewGroup) layoutExplorerFile;
+
+
         String fileName = file.getName();
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = vi.inflate(R.layout.file_template, null);
+
         TextView textView = (TextView) v.findViewById(R.id.file_template_text);
         textView.setText(fileName);
         ImageView imageView = (ImageView) v.findViewById(R.id.file_template_img);
@@ -232,7 +238,9 @@ public class NeuesPraesentationActivity extends Activity {
         });
 
         layoutExplorerFile = findViewById(R.id.explorer_file);
+
         group.addView(v);
+
     }
 
     private void fuegeFolienseitenHinzu() {
