@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
@@ -90,13 +91,35 @@ public class SeiteWaehlenActivity extends Activity {
     }
     private void setupUI(){
         Button btnOk =  (Button) findViewById(R.id.btnOk_single_page);
+        Button btnCancel = (Button) findViewById(R.id.btnCancel_single_page);
+        Button btnCheckAll = (Button) findViewById(R.id.btnSelectAll_single_page);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                finish();
+            }
+        });
+        btnCheckAll.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for (int i = 0;i<checkBoxes.size();i++){
+                    checkBoxes.get(i).setChecked(true);
+                }
+            }
+        }));
         TextView txtDocName = (TextView) findViewById(R.id.txtDocumentName_single_page);
         txtDocName.setText(fileName);
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+            if(checkBoxes.size()>0){
                 mergePages();
+            } else {
+                Toast.makeText(getApplicationContext(), "Keine Seiten ausgewählt!", Toast.LENGTH_SHORT).show();
+            }
+
             }
         });
     }
@@ -108,10 +131,9 @@ public class SeiteWaehlenActivity extends Activity {
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = vi.inflate(R.layout.page_template, null);
         CheckBox cbChoose = (CheckBox) v.findViewById(R.id.cbChoose_single_page);
-        //TextView textView = (TextView) v.findViewById(R.id.page_template_text);
+        TextView textView = (TextView) v.findViewById(R.id.page_template_text);
         ImageView pdfPageImage = (ImageView) v.findViewById(R.id.img_single_page);
-        cbChoose.setText("Seite " + pageNumber);
-       // textView.setText("Seite " + pageNumber);
+        textView.setText("Seite " + pageNumber);
         checkBoxes.add(cbChoose);
         cbChoose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,7 +152,7 @@ public class SeiteWaehlenActivity extends Activity {
 
         Bitmap bp = BitmapFactory.decodeFile(FileUtilities.PFAD_ROOT + "tempImages/tempPage" + pageNumber + ".jpeg");
         pdfPageImage.setImageBitmap(bp);
-        group.addView(v);
+        group.addView(v,0);
     }
 
 
@@ -173,7 +195,7 @@ public class SeiteWaehlenActivity extends Activity {
                         // create a pdf doc
                         PDFFile pdf = new PDFFile(bb);
                         //Get the first page from the pdf doc
-                        PDFPage pdfPage = pdf.getPage(1, true);
+                        //PDFPage pdfPage = pdf.getPage(1, true);
                         //create a scaling value according to the WebView Width
                         //final float scale = viewSize / pdfPage.getWidth() * 0.95f;
                         final float scale = 1;

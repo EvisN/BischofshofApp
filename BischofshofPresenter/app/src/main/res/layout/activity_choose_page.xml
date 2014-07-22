@@ -20,7 +20,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Select All"
+            android:text="Alle Auswählen"
             android:id="@+id/btnSelectAll_single_page" />
 
         <Button
@@ -32,7 +32,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel"
+            android:text="Abbrechen"
             android:id="@+id/btnCancel_single_page"
             android:singleLine="false" />
 

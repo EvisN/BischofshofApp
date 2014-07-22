@@ -15,13 +15,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -207,12 +210,7 @@ public class NeuesPraesentationActivity extends Activity {
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View v = vi.inflate(R.layout.file_template, null);
         TextView textView = (TextView) v.findViewById(R.id.file_template_text);
-        if (fileName.length() > 10) {
-            textView.setText(fileName.substring(0, 10) + "...");
-        } else {
-            textView.setText(fileName);
-        }
-
+        textView.setText(fileName);
         ImageView imageView = (ImageView) v.findViewById(R.id.file_template_img);
 
         if (FileUtilities.getFileExtension(fileName).equals("pdf")) {
@@ -229,6 +227,7 @@ public class NeuesPraesentationActivity extends Activity {
             @Override
             public void onClick(View view) {
 
+                removeFromView(view);
             }
         });
 
@@ -242,6 +241,27 @@ public class NeuesPraesentationActivity extends Activity {
         i.putExtra("file", clickedFile);
         startActivityForResult(i, 1);
     }
+    private void removeFromView(View view){
+        LinearLayout ll = (LinearLayout)view.getParent();
+        TextView tv = (TextView)ll.getChildAt(1);
+        String fileName = tv.getText().toString();
+
+        for(int i = 0;i<currentPresentation.size();i++){
+            String tempName = currentPresentation.get(i).getName();
+            String filePath = currentPresentation.get(i).getAbsolutePath();
+
+
+            if(tempName.equals(fileName)){
+                if(filePath.contains("EDIT_")){
+                    File file = new File(filePath);
+                    file.delete();
+                }
+                currentPresentation.remove(i);
+            }
+        }
+        ll.removeAllViews();
+
+    }
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (resultCode == RESULT_OK) {
             String fName = intent.getStringExtra("fileName");
@@ -252,14 +272,19 @@ public class NeuesPraesentationActivity extends Activity {
             LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View v = vi.inflate(R.layout.file_template, null);
             TextView textView = (TextView) v.findViewById(R.id.file_template_text);
-            if (fileName.length() > 10) {
-                textView.setText(fileName.substring(0, 10) + "...");
-            } else {
+
                 textView.setText(fileName);
-            }
+
 
             ImageView imageView = (ImageView) v.findViewById(R.id.file_template_img);
             imageView.setImageResource(R.drawable.pdf2);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    removeFromView(view);
+                }
+            });
 
             layoutExplorerFile = findViewById(R.id.explorer_file);
             group.addView(v);
@@ -269,7 +294,12 @@ public class NeuesPraesentationActivity extends Activity {
 
     private void savePresentation() {
         //Hier wird die Präsentation gespeichert
-        saveDialog();
+        if(currentPresentation.size()==0){
+            Toast.makeText(getApplicationContext(), "Keine Dateien ausgewählt!", Toast.LENGTH_SHORT).show();
+        } else{
+            saveDialog();
+        }
+
     }
 
     private void addItemsToContainer(String path) {
@@ -380,12 +410,11 @@ public class NeuesPraesentationActivity extends Activity {
     //Verwenden damit Inhalt von tempImages gelöscht wird
     //TODO Methode ändern
     public void deleteFilesFromDir(String filePath) {
-        File fileOrDirectory = new File(filePath);
-        if (fileOrDirectory.isDirectory())
-            for (File child : fileOrDirectory.listFiles())
-               // deleteFilesFromDir(child);
-
-        fileOrDirectory.delete();
+        File dir = new File(filePath);
+        File[] filesInDir =  dir.listFiles();
+            for (File child : filesInDir){
+                child.delete();
+            }
 
     }
 
@@ -433,7 +462,6 @@ public class NeuesPraesentationActivity extends Activity {
         alert.setTitle("Präsentation Speichern");
         alert.setMessage("Neuen Namen eingeben");
 
-        // Set an EditText view to get user input
         final EditText input = new EditText(this);
         alert.setView(input);
 
@@ -442,7 +470,7 @@ public class NeuesPraesentationActivity extends Activity {
                 String value = input.getText().toString();
                 copyDirectory(currentPresentation, value);
 
-                //deleteFilesFromDir(FileUtilities.PFAD_ROOT + "tempImages");
+                deleteFilesFromDir(FileUtilities.PFAD_ROOT + "tempImages");
             }
         });
 
