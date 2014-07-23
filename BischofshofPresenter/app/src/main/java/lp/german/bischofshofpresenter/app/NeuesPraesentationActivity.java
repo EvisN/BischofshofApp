@@ -45,7 +45,7 @@ import lp.german.slidingmenu.model.NavDrawerItem;
 public class NeuesPraesentationActivity extends Activity {
 
     //Views
-    private ImageButton btn_speichern, btn_scroll_left, btn_scroll_right, btn_wb, btn_bh, btn_folie_hinzufuegen, btn_folienseiten_hinzufuegen, btn_menu_schliesen;
+    private ImageButton btn_speichern, btn_wb, btn_bh, btn_folie_hinzufuegen, btn_folienseiten_hinzufuegen, btn_menu_schliesen;
     private View m_spacer_wb, m_spacer_bh;
     private ScrollView ordner_explorer, datei_explorer;
     private HorizontalScrollView praesentations_explorer;
@@ -104,8 +104,6 @@ public class NeuesPraesentationActivity extends Activity {
 
         //Buttons
         btn_speichern = (ImageButton) findViewById(R.id.btn_speichern);
-        btn_scroll_left = (ImageButton) findViewById(R.id.btn_scroll_left);
-        btn_scroll_right = (ImageButton) findViewById(R.id.btn_scroll_right);
         btn_wb = (ImageButton) findViewById(R.id.logo_weltenburger);
         btn_bh = (ImageButton) findViewById(R.id.logo_bh);
         btn_menu_schliesen = (ImageButton) findViewById(R.id.btn_menu_schliesen);
@@ -158,19 +156,7 @@ public class NeuesPraesentationActivity extends Activity {
             }
         });
 
-        btn_scroll_left.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //hier wird die presentation view nach links gescrollt
-            }
-        });
 
-        btn_scroll_right.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //hier wird die presentation view nach rechts gescrollt
-            }
-        });
 
         btn_bh.setOnClickListener(new View.OnClickListener() {
             @Override
