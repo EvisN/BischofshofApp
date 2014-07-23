@@ -85,7 +85,6 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:id="@+id/background_start_presentation"
-        android:src="@drawable/background_line"
         />
 
     <RelativeLayout

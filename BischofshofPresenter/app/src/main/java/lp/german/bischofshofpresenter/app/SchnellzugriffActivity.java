@@ -8,8 +8,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,8 +39,6 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
     private View mLinearLayout;
     private ImageView mFrame;
 
-    private CharSequence mTitle;
-
     private ArrayList<NavDrawerItem> navDrawerItems;
     private NavDrawerListAdapter adapter;
 
@@ -51,10 +47,6 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
     private ImageView btn_wb, btn_bh;
 
     private String mMarke;
-
-    private Boolean isBischofshof = true;
-
-    private ActionBar ab;
 
     private int FOLDER_ICON;
 
@@ -107,7 +99,6 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
         mLinearLayout = findViewById(R.id.container);
         btn_bh = (ImageView)findViewById(R.id.btn_bh);
         btn_wb = (ImageView)findViewById(R.id.btn_wb);
-        ab = getActionBar();
     }
 
     private void setupListeners(){
@@ -117,7 +108,6 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
                 setDesignBischofshof();
                 addItemsToContainer(FileUtilities.PFAD_BH);
                 addItems(FileUtilities.PFAD_BH);
-                ab.setTitle("Bischofshof");
             }
         });
 
@@ -127,7 +117,6 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
                 setDesignWeltenburger();
                 addItemsToContainer(FileUtilities.PFAD_WB);
                 addItems(FileUtilities.PFAD_WB);
-                ab.setTitle("Weltenburger");
             }
         });
     }
@@ -170,8 +159,6 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
         mDrawerList.setAdapter(adapter);
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
 
 
     }
@@ -181,13 +168,6 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
             NavDrawerItem item = (NavDrawerItem)adapter.getItem(position);
-
-            mTitle = item.getTitle();
-            if(!mTitle.equals("Zurück")) {
-                ab.setSubtitle(mTitle);
-            }else {
-                ab.setSubtitle("");
-            }
 
             try {
                 addItemsToContainer(item.getAbsolutePath());
@@ -243,9 +223,6 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
                             clickedFile = currentFile;
                             showPopup(v);
                         } else {
-                            isBischofshof = currentFile.getAbsolutePath().toString().matches(".*Bischofshof.*");
-
-                            ab.setSubtitle(currentFile.getName());
                             addItems(currentFile.getAbsolutePath());
                             addItemsToContainer(currentFile.getAbsolutePath());
                         }
@@ -256,8 +233,8 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
                 group.addView(v);
             }
         }
-
-        if(!files[0].getParentFile().getName().equals("sdcard")&&!files[0].getParentFile().getName().equals("BischofsHofApp")) {
+        File file = new File(path);
+        if(!file.getName().equals("Bischofshof")&&!file.getName().equals("Weltenburger")) {
             final File currentFile = files[0].getParentFile().getParentFile();
             String fileName = "...";
             LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);

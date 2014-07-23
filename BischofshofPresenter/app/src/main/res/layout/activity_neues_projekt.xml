@@ -7,25 +7,25 @@
     <View
         android:layout_width="1dp"
         android:layout_height="fill_parent"
-        android:layout_marginLeft="200dp"
+        android:layout_marginLeft="250dp"
         android:background="@android:color/black"
         android:id="@+id/vSpace"
         />
 
     <RelativeLayout
-        android:layout_width="200dp"
+        android:layout_width="250dp"
         android:layout_height="fill_parent"
         android:id="@+id/neue_praesentation_navigation_rel"
         android:background="@drawable/navigation_background">
 
         <ImageButton
-            android:layout_width="100dp"
+            android:layout_width="125dp"
             android:layout_height="80dp"
             android:layout_alignParentRight="true"
             android:src="@drawable/logo_weltenburger"
             android:id="@+id/logo_weltenburger"
             android:contentDescription="wb_logo"
-            android:background="@android:color/white"
+            android:background="@android:color/transparent"
             android:scaleType="fitXY"/>
 
         <View
@@ -36,7 +36,7 @@
             />
 
         <ImageButton
-            android:layout_width="100dp"
+            android:layout_width="125dp"
             android:layout_height="70dp"
             android:layout_toLeftOf="@id/logo_weltenburger"
             android:src="@drawable/logo_bischofshof"
@@ -46,7 +46,7 @@
             android:scaleType="fitXY"/>
 
         <View
-            android:layout_width="100dp"
+            android:layout_width="125dp"
             android:layout_height="1dp"
             android:background="@android:color/black"
             android:layout_below="@id/logo_weltenburger"
@@ -55,7 +55,7 @@
             />
 
         <View
-            android:layout_width="100dp"
+            android:layout_width="125dp"
             android:layout_height="1dp"
             android:background="@android:color/black"
             android:layout_below="@id/logo_weltenburger"

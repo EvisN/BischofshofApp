@@ -71,6 +71,8 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
     private ArrayList<String> gewaehlteProjekte;
     private int result = RESULT_CANCELED;
 
+    private int checkedPosition = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -198,6 +200,9 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
                 FileUtilities.deleteProject(selectedPath);
                 adapter.notifyDataSetChanged();
                 result = RESULT_OK;
+                Toast toast = Toast.makeText(getApplicationContext(), "Erfolgreich gelöscht", Toast.LENGTH_SHORT);
+                toast.show();
+                addItemsToContainer(FileUtilities.PFAD_PROJEKTE);
             }
         });
 
@@ -229,6 +234,8 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
                 Log.d("RENAME WAS: ", String.valueOf(file.renameTo(fileNew)));
                 addItemsToContainer(FileUtilities.PFAD_PROJEKTE);
                 result = RESULT_OK;
+                Toast toast = Toast.makeText(getApplicationContext(), "Erfolgreich umbenannt", Toast.LENGTH_SHORT);
+                toast.show();
             }
         });
 
@@ -321,8 +328,15 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
                 selectedPath = projektItem.getAbsolutePath();
                 selected[position] = !selected[position];
                 view.setSelected(!view.isSelected());
+                uncheckLastItem(position);
+                view.setBackgroundResource(R.drawable.list_item_bg_pressed);
             }
         });
+    }
+
+    private void uncheckLastItem(int newPosition){
+
+        checkedPosition = newPosition;
     }
 
 

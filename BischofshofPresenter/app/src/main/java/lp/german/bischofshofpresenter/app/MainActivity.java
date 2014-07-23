@@ -55,7 +55,9 @@ public class MainActivity extends Activity{
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         staticContext = this.getApplicationContext();
+
         setupUIElements();
+        checkDesign();
         addUIClickListeners();
         setPreview();
     }
@@ -222,6 +224,13 @@ public class MainActivity extends Activity{
     @Override
     protected void onResume(){
         super.onResume();
+        checkDesign();
+        setupSpinner(this);
+
+        setPreview();
+    }
+
+    private void checkDesign() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         String gewaehlteMarke = sharedPref.getString(SettingsActivity.KEY_PREF_MARKE, "");
 
@@ -230,9 +239,6 @@ public class MainActivity extends Activity{
         }else{
             setLayoutWeltenburger();
         }
-           setupSpinner(this);
-
-        setPreview();
     }
 
     @Override
@@ -260,7 +266,7 @@ public class MainActivity extends Activity{
         btnNeuePraesentation.setImageResource(R.drawable.btn_neue_praesentation_wb_selector);
         btnGespeichertePraesentationen.setImageResource(R.drawable.btn_gespeicherte_praesentationen_wb_selector);
         btnEinstellungen.setImageResource(R.drawable.btn_einstellungen_selector_wb);
-        backgroundStartPresentation.setBackgroundColor(Color.WHITE);
+        backgroundStartPresentation.setBackgroundColor(R.drawable.background_line);
     }
 
     private void setPreview(){
