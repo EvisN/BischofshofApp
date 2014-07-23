@@ -9,6 +9,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -47,11 +49,14 @@ public class NeuesPraesentationActivity extends Activity {
     private View mLinearLayout;
     private View layoutExplorerFile;
     private int FOLDER_ICON;
+    private int FOLDER_ICON_WB;
     private File clickedFile;
     private ArrayList<NavDrawerItem> navDrawerItems;
 
 
     private ArrayList<File> currentPresentation;
+
+    private RelativeLayout relativeLayoutMenu;
 
 
 
@@ -59,10 +64,9 @@ public class NeuesPraesentationActivity extends Activity {
     private RelativeLayout menu;
 
     //Dummy Button zum test des Sidemenues
-    private Button dummy_button;
 
     //Flags
-    private boolean BISCHOFSHOF_GEWAEHLT = false;
+    private boolean BISCHOFSHOF_GEWAEHLT = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +86,12 @@ public class NeuesPraesentationActivity extends Activity {
             }
 
         } else{
-            addItemsToContainer(FileUtilities.PFAD_BH);
+            if(BISCHOFSHOF_GEWAEHLT){
+                addItemsToContainer(FileUtilities.PFAD_BH);
+            } else {
+                addItemsToContainer(FileUtilities.PFAD_WB);
+            }
+
         }
 
     }
@@ -101,6 +110,7 @@ public class NeuesPraesentationActivity extends Activity {
 
         //Menu
         menu = (RelativeLayout) findViewById(R.id.menu);
+        relativeLayoutMenu = (RelativeLayout) findViewById(R.id.neue_praesentation_navigation_rel);
 
         //Spacer
         m_spacer_bh = findViewById(R.id.bhSpace);
@@ -112,10 +122,11 @@ public class NeuesPraesentationActivity extends Activity {
         praesentations_explorer = (ScrollView) findViewById(R.id.praesentations_explorer);
 
         FOLDER_ICON = R.drawable.icon_ordner_bh;
+        FOLDER_ICON_WB = R.drawable.icon_ordner_wb;
         mLinearLayout = findViewById(R.id.childFile);
         layoutExplorerFile = findViewById(R.id.explorer_file);
         currentPresentation = new ArrayList<File>();
-
+        setBrauerei();
 
     }
 
@@ -144,16 +155,20 @@ public class NeuesPraesentationActivity extends Activity {
         btn_bh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                menu.setVisibility(View.GONE);
                 BISCHOFSHOF_GEWAEHLT = true;
                 setBrauerei();
+                addItemsToContainer(FileUtilities.PFAD_BH);
             }
         });
 
         btn_wb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                menu.setVisibility(View.GONE);
                 BISCHOFSHOF_GEWAEHLT = false;
                 setBrauerei();
+                addItemsToContainer(FileUtilities.PFAD_WB);
             }
         });
 
@@ -190,13 +205,27 @@ public class NeuesPraesentationActivity extends Activity {
             m_spacer_wb.setVisibility(View.VISIBLE);
             m_spacer_bh.setVisibility(View.GONE);
 
-            //Hier Ordnerstruktur auf BH setzen
+            datei_explorer.setBackgroundResource((R.drawable.frame_screen));
+            btn_menu_schliesen.setBackgroundResource((R.drawable.kontextbutton_bb_schliessen));
+            btn_folie_hinzufuegen.setBackgroundResource((R.drawable.kontextbutton_bb_doc_hinzufuegen));
+            btn_folienseiten_hinzufuegen.setBackgroundResource((R.drawable.kontextbutton_bb_seiten_waehlen));
+
+            btn_speichern.setBackgroundResource(R.drawable.btn_speichern);
+            relativeLayoutMenu.setBackgroundResource(R.drawable.navigation_background);
+
         } else {
             m_spacer_wb.setVisibility(View.GONE);
             m_spacer_bh.setVisibility(View.VISIBLE);
 
-            //Hier Ordnerstruktur auf WB setzen
-        }
+
+            datei_explorer.setBackgroundResource((R.drawable.frame_screen_wb));
+            btn_menu_schliesen.setBackgroundResource((R.drawable.kontextbutton_wb_schliessen));
+            btn_folie_hinzufuegen.setBackgroundResource((R.drawable.kontextbutton_wb_doc_hinzufuegen));
+            btn_folienseiten_hinzufuegen.setBackgroundResource((R.drawable.kontextbutton_wb_seiten_waehlen));
+
+            btn_speichern.setBackgroundResource(R.drawable.btn_speichern_wb);
+            relativeLayoutMenu.setBackgroundColor(Color.WHITE);
+           }
     }
 
     private void fuegeFolieHinzu() {
@@ -225,7 +254,13 @@ public class NeuesPraesentationActivity extends Activity {
             if (!clickedFile.isDirectory()) {
                 imageView.setImageResource(R.drawable.video);
             } else {
-                imageView.setImageResource(FOLDER_ICON);
+                if(BISCHOFSHOF_GEWAEHLT){
+                    imageView.setImageResource(FOLDER_ICON);
+                } else {
+                    imageView.setImageResource(FOLDER_ICON_WB);
+
+                }
+
             }
         }
 
@@ -246,8 +281,14 @@ public class NeuesPraesentationActivity extends Activity {
     private void fuegeFolienseitenHinzu() {
         //Hier nur Bestimmte Seiten zur Präsentation hinzufuegen
         Intent i = new Intent(getApplicationContext(), SeiteWaehlenActivity.class);
-        i.putExtra("file", clickedFile);
-        startActivityForResult(i, 1);
+        if (FileUtilities.getFileExtension(clickedFile.getName()).equals("pdf")) {
+            i.putExtra("file", clickedFile);
+            i.putExtra("BB_FLAG", BISCHOFSHOF_GEWAEHLT);
+            startActivityForResult(i, 1);
+        } else {
+            Toast.makeText(getApplicationContext(), "Kein PDF-Dokument!", Toast.LENGTH_SHORT).show();
+        }
+
     }
     private void removeFromView(View view){
         LinearLayout ll = (LinearLayout)view.getParent();
@@ -326,8 +367,8 @@ public class NeuesPraesentationActivity extends Activity {
 
                 TextView textView = (TextView) v.findViewById(R.id.file_template_text);
 
-                if (fileName.length() > 10) {
-                    textView.setText(fileName.substring(0, 10) + "...");
+                if (fileName.length() > 15) {
+                    textView.setText(fileName.substring(0, 15) + "...");
                 } else {
                     textView.setText(fileName);
                 }
@@ -341,7 +382,12 @@ public class NeuesPraesentationActivity extends Activity {
                     if (!files[i].isDirectory()) {
                         imageView.setImageResource(R.drawable.video);
                     } else {
-                        imageView.setImageResource(FOLDER_ICON);
+                        if(BISCHOFSHOF_GEWAEHLT){
+                            imageView.setImageResource(FOLDER_ICON);
+                        } else {
+                            imageView.setImageResource(FOLDER_ICON_WB);
+
+                        }
                     }
                 }
 
@@ -374,7 +420,6 @@ public class NeuesPraesentationActivity extends Activity {
 
             TextView textView = (TextView) v.findViewById(R.id.file_template_text);
             textView.setText(fileName);
-
             ImageView imageView = (ImageView) v.findViewById(R.id.file_template_img);
 
             imageView.setImageResource(R.drawable.previous);

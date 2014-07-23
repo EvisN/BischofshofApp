@@ -62,15 +62,16 @@ import com.itextpdf.text.Image;
 public class SeiteWaehlenActivity extends Activity {
 
 
-    File file = null;
-    String fileName = "";
-    LinearLayout relLayoutMain;
-    int countPages = 0;
-    ArrayList<String> choosenPageURLs;
-    ArrayList<String> allPageURLs;
-    ArrayList<CheckBox> checkBoxes;
-    int count = 1;
-
+    private File file = null;
+    private String fileName = "";
+    private LinearLayout relLayoutMain;
+    private int countPages = 0;
+    private ArrayList<String> choosenPageURLs;
+    private ArrayList<String> allPageURLs;
+    private ArrayList<CheckBox> checkBoxes;
+    private int count = 1;
+    private boolean BISCHOFSHOF_GEWAEHLT = true;
+    private LinearLayout mainLayout;
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
@@ -78,6 +79,7 @@ public class SeiteWaehlenActivity extends Activity {
         Intent i = getIntent();
         file = (File) i.getExtras().get("file");
         fileName = file.getName();
+        BISCHOFSHOF_GEWAEHLT = (Boolean) i.getExtras().get("BB_FLAG");
 
         //Settings
         PDFImage.sShowImages = true; // show images
@@ -95,7 +97,12 @@ public class SeiteWaehlenActivity extends Activity {
         Button btnOk =  (Button) findViewById(R.id.btnOk_single_page);
         Button btnCancel = (Button) findViewById(R.id.btnCancel_single_page);
         Button btnCheckAll = (Button) findViewById(R.id.btnSelectAll_single_page);
-
+        mainLayout = (LinearLayout) findViewById(R.id.choose_page_layout);
+        if(BISCHOFSHOF_GEWAEHLT){
+            mainLayout.setBackgroundResource(R.drawable.frame_screen);
+        } else {
+            mainLayout.setBackgroundResource(R.drawable.frame_screen_wb);
+        }
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,7 +132,10 @@ public class SeiteWaehlenActivity extends Activity {
             }
         });
     }
-    private void setupPages(Bitmap bmp, int pageNumber) {
+    private void changeTheme(){
+
+    }
+        private void setupPages(Bitmap bmp, int pageNumber) {
 
         relLayoutMain = (LinearLayout) findViewById(R.id.content_single_page);
         ViewGroup group = (ViewGroup) relLayoutMain;
