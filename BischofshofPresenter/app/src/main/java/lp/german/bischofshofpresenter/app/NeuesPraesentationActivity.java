@@ -433,7 +433,7 @@ public class NeuesPraesentationActivity extends Activity {
         }
         if(!files[0].getParentFile().getName().equals("sdcard")&&!files[0].getParentFile().getName().equals("BischofsHofApp")) {
             final File currentFile = files[0].getParentFile().getParentFile();
-            String fileName = "...";
+            String fileName = "";
             LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View v = vi.inflate(R.layout.file_template, null);
 
@@ -442,10 +442,12 @@ public class NeuesPraesentationActivity extends Activity {
             ImageView imageView = (ImageView) v.findViewById(R.id.file_template_img);
 
             imageView.setImageResource(R.drawable.previous);
+            imageView.setBackgroundColor(Color.GRAY);
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    menu.setVisibility(View.GONE);
                     addItemsToContainer(currentFile.getAbsolutePath());
                     addItems(currentFile.getAbsolutePath());
                 }
