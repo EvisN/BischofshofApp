@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.ViewManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -46,7 +47,8 @@ public class NeuesPraesentationActivity extends Activity {
     //Views
     private ImageButton btn_speichern, btn_scroll_left, btn_scroll_right, btn_wb, btn_bh, btn_folie_hinzufuegen, btn_folienseiten_hinzufuegen, btn_menu_schliesen;
     private View m_spacer_wb, m_spacer_bh;
-    private ScrollView ordner_explorer, datei_explorer, praesentations_explorer;
+    private ScrollView ordner_explorer, datei_explorer;
+    private HorizontalScrollView praesentations_explorer;
 
     private View mLinearLayout;
     private View layoutExplorerFile;
@@ -121,7 +123,7 @@ public class NeuesPraesentationActivity extends Activity {
         //Scrollviews
         ordner_explorer = (ScrollView) findViewById(R.id.ordner_struktur);
         datei_explorer = (ScrollView) findViewById(R.id.datei_explorer);
-        praesentations_explorer = (ScrollView) findViewById(R.id.praesentations_explorer);
+        praesentations_explorer = (HorizontalScrollView) findViewById(R.id.praesentations_explorer);
 
         FOLDER_ICON = R.drawable.icon_ordner_bh;
         FOLDER_ICON_WB = R.drawable.icon_ordner_wb;
