@@ -2,11 +2,23 @@
 <pre-dex-items>
 
     <item
+        dex="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/app/build/intermediates/pre-dexed/debug/itextg-5.5.1-10c9d4993158fbc12cf00b814d0a38fa7d483236.jar"
+        jar="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/itextg-5.5.1/itextg-5.5.1.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="b44c7e1af90221e9e4ea2fa1436cecaab5810654"/>
+    <item
         dex="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/app/build/intermediates/pre-dexed/debug/classes-c095e3f7cca51ce51bada4f6b366ad35cfaab8d6.jar"
         jar="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/build/intermediates/exploded-aar/BischofshofPresenter/android-pdfview/unspecified/classes.jar"
         jumboMode="false"
         revision="19.1.0"
-        sha1="1d42a1806c5926d615a92363bf3779367c961fbe"/>
+        sha1="79ef049547f3d8a7781fac65b35e6b35f96e9106"/>
+    <item
+        dex="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/app/build/intermediates/pre-dexed/debug/pdfviewerlibrary-6e1151015485076bd6d8fd32c0f2a3f9a077675c.jar"
+        jar="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/app/libs/pdfviewerlibrary.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="5f8804547438d7663846a7c236bb7a8fda7a40d9"/>
     <item
         dex="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/app/build/intermediates/pre-dexed/debug/classes-4fceba6013c3dce9fb20a7254a2952f4b72eef47.jar"
         jar="/Users/paullichtenberger/Projects/UEx/BischofshofApp/BischofshofPresenter/build/intermediates/exploded-aar/com.android.support/appcompat-v7/19.1.0/classes.jar"

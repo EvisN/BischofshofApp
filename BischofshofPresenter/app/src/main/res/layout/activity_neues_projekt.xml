@@ -91,7 +91,9 @@
                 android:layout_height="100dp"
                 android:layout_marginTop="110dp"
                 android:id="@+id/btn_folie_hinzufuegen"
-                android:background="@android:color/background_light"/>
+                android:background="@drawable/kontextbutton_dokument_hinzufuegen"
+                android:scaleType="centerInside"
+                />
 
             <ImageButton
                 android:layout_width="fill_parent"
@@ -99,14 +101,17 @@
                 android:layout_marginTop="5dp"
                 android:layout_below="@id/btn_folie_hinzufuegen"
                 android:id="@+id/btn_folienseiten_hinzufuegen"
-                android:background="@android:color/background_light"/>
+                android:background="@drawable/kontextbutton_seite_waehlen"
+                android:scaleType="centerInside"/>
 
             <ImageButton
                 android:layout_width="fill_parent"
                 android:layout_height="100dp"
                 android:layout_below="@id/btn_folienseiten_hinzufuegen"
                 android:layout_marginTop="4dp"
-                android:id="@+id/btn_menu_schliesen"/>
+                android:background="@drawable/kontextbutton_schliesen"
+                android:id="@+id/btn_menu_schliesen"
+                android:scaleType="centerInside"/>
         </RelativeLayout>
     </RelativeLayout>
 
@@ -160,14 +165,16 @@
             android:layout_marginLeft="4dp"
             android:layout_height="fill_parent"
             android:layout_alignParentRight="true"
-            android:id="@+id/btn_scroll_right"/>
+            android:id="@+id/btn_scroll_right"
+            />
 
         <ScrollView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_toRightOf="@id/btn_scroll_left"
             android:layout_toLeftOf="@id/btn_scroll_right"
-            android:id="@+id/praesentations_explorer">
+            android:id="@+id/praesentations_explorer"
+            >
 
             <LinearLayout
                 android:orientation="horizontal"

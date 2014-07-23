@@ -5,9 +5,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -18,46 +20,31 @@ import lp.german.slidingmenu.model.NavDrawerItem;
 /**
  * Created by paullichtenberger on 11.07.14.
  */
-public class ProjectListAdapter extends BaseAdapter {
+public class ProjectListAdapter extends ArrayAdapter<ProjektItem> {
 
-    private Context context;
-    private ArrayList<ProjektItem> projektItems;
-    private String mName;
+    private final Context context;
+    private final ArrayList<ProjektItem> projektItems;
 
     public ProjectListAdapter(Context context, ArrayList<ProjektItem> projektItems){
+        super(context,R.layout.projekt_list_item,projektItems);
         this.context = context;
         this.projektItems = projektItems;
     }
 
     @Override
-    public int getCount() {
-        return projektItems.size();
-    }
-
-    @Override
-    public ProjektItem getItem(int position) {
-        return projektItems.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            LayoutInflater mInflater = (LayoutInflater)
-                    context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.projekt_list_item, null);
-        }
 
-        TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View rowView = inflater.inflate(R.layout.projekt_list_item, parent, false);
+
+
+        ProjektItem item = projektItems.get(position);
+
+        TextView txtTitle = (TextView) rowView.findViewById(R.id.title);
 
         //txtCount.setText("5");
-        txtTitle.setText(projektItems.get(position).getTitle());
+        txtTitle.setText(item.getTitle());
 
-        return convertView;
+        return rowView;
     }
-
 }

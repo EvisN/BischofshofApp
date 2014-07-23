@@ -33,7 +33,6 @@
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:choiceMode="multipleChoice"
         android:divider="@android:color/holo_green_dark"
         android:dividerHeight="1dp"
         android:background="@drawable/navigation_background"
@@ -44,7 +43,9 @@
         android:layout_height="match_parent"
         android:layout_toRightOf="@id/list_slidermenu"
         android:id="@+id/projekt_list"
+        android:choiceMode="multipleChoice"
         android:padding="50dp"
+        android:background="@drawable/list_selector"
         />
 
 

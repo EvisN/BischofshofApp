@@ -2,11 +2,13 @@ package lp.german.bischofshofpresenter.app;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -51,6 +53,7 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
     private CharSequence mTitle;
 
     private File[] filesList;
+    private File[] files;
     private File clickedFile;
     private ArrayList<String> filePaths;
 
@@ -62,6 +65,9 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
     private ArrayList<ProjektItem> projektItems;
     private ListView projektListe;
     private ProjectListAdapter adapter;
+    private ProgressDialog dialog;
+    private ArrayList<String> gewaehlteProjekte;
+    private int result = RESULT_CANCELED;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,12 +115,15 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
         mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
         mFrame = (ImageView)findViewById(R.id.frame_screen);
         mLinearLayout = findViewById(R.id.container);
+        gewaehlteProjekte = new ArrayList<String>();
 
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(parent.getItemAtPosition(position).toString().equals("Bearbeiten")){
-
+                    Intent i = new Intent(getApplicationContext(),NeuesPraesentationActivity.class);
+                    i.putExtra("projectPath", selectedPath);
+                    startActivity(i);
                     return;
                 }
                 if(parent.getItemAtPosition(position).toString().equals("Umbenennen")){
@@ -124,7 +133,7 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
                     return;
                 }
                 if(parent.getItemAtPosition(position).toString().equals("Löschen")){
-
+                    callDeleteDialog();
                     return;
                 }
                 if(parent.getItemAtPosition(position).toString().equals("Versenden")){
@@ -132,11 +141,70 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
                     return;
                 }
                 if(parent.getItemAtPosition(position).toString().equals("Präsentieren")){
+                    File dir = new File(selectedPath);
+                    files = dir.listFiles();
+                    gewaehlteProjekte.add(selectedPath);
 
+                    new updatePresentationFolder(getApplicationContext()).execute();
                     return;
                 }
             }
         });
+    }
+
+    private class updatePresentationFolder extends AsyncTask<String, Void, String> {
+        private Context context;
+
+        public updatePresentationFolder(Context ctx){
+            context = ctx;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+        @Override
+        protected String doInBackground(String... args) {
+            //TODO Kopieren wahrscheinlich nicht notwendig
+            FileUtilities.emptyTempFolder();
+            FileUtilities.addFilesToPresentationTemp(gewaehlteProjekte);
+            return "";
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+                if(FileUtilities.getNumberOfFilesFromPath(FileUtilities.PFAD_PRAESENTATION)!=0) {
+                    Intent i = new Intent(getApplicationContext(),SimpleFileViewActivity.class);
+                    i.putExtra("filePaths", FileUtilities.getAbsolutePathsFromFolder(selectedPath));
+                    i.putExtra("file", files[0].getAbsolutePath());
+                    startActivity(i);
+            }
+        }
+    }
+
+    private void callDeleteDialog(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Löschen");
+        alert.setMessage("Möchten sie das Projekt wirklich löschen?");
+
+        alert.setNegativeButton("Löschen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                FileUtilities.deleteProject(selectedPath);
+                adapter.notifyDataSetChanged();
+                result = RESULT_OK;
+            }
+        });
+
+        alert.setPositiveButton("Abbrechen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        alert.show();
     }
 
     private void callRenameDialog(){
@@ -156,6 +224,7 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
                 File fileNew = new File(FileUtilities.PFAD_PROJEKTE+"/"+value);
                 Log.d("RENAME WAS: ", String.valueOf(file.renameTo(fileNew)));
                 addItemsToContainer(FileUtilities.PFAD_PROJEKTE);
+                result = RESULT_OK;
             }
         });
 
@@ -173,7 +242,7 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
     public void onBackPressed() {
         Intent returnIntent = new Intent();
         returnIntent.putExtra("chosenProjects", getSelectedPaths());
-        setResult(MainActivity.PROJEKTE_BEARBEITET, returnIntent);
+        setResult(result, returnIntent);
         finish();
     }
 
@@ -192,7 +261,7 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
 
     //Füllt Container mit den Dateien des ausgewählten Ordners
     private void addItemsToContainer(String path){
-
+        /*
         File[] files = FileUtilities.getAllFilesFromPath(path);
 
         ViewGroup group = (ViewGroup) mLinearLayout;
@@ -224,7 +293,7 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
                 public void onClick(View v) {
                     clickedFile = currentFile;
                     selectedPath = currentFile.getAbsolutePath();
-                    v.setBackgroundColor(selected[index] ? 0x00AAAAAA : 0xFFAAAAAA);
+                    v.setBackgroundResource(       R.drawable.list_item_bg_pressed);
                     selected[index] = !selected[index];
                 }
             });
@@ -232,17 +301,27 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
             mLinearLayout = findViewById(R.id.container);
             group.addView(v);
             projektItems.add(new ProjektItem(fileName, currentFile.getAbsolutePath()));
+        }*/
+        File[] files = FileUtilities.getAllFilesFromPath(path);
+        projektItems = new ArrayList<ProjektItem>();
+        for(File f: files){
+            projektItems.add(new ProjektItem(f.getName(),f.getAbsolutePath()));
         }
-        adapter = new ProjectListAdapter(this, projektItems);
+
+        adapter = new ProjectListAdapter(this,  projektItems);
         projektListe.setAdapter(adapter);
-        projektListe.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+         projektListe.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ProjektItem projektItem = projektItems.get(position);
                 selectedPath = projektItem.getAbsolutePath();
+                selected[position] = !selected[position];
+                view.setSelected(!view.isSelected());
             }
         });
     }
+
+
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {

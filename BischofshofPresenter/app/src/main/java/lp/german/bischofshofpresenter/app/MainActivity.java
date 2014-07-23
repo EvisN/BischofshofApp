@@ -42,6 +42,7 @@ public class MainActivity extends Activity{
     private ArrayAdapter navSpinnerAdapter;
     private ArrayList<String> navSpinnerItems;
     private SharedPreferences sharedPref;
+    private static Context staticContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +50,7 @@ public class MainActivity extends Activity{
         setContentView(R.layout.activity_main);
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-
+        staticContext = this.getApplicationContext();
         setupUIElements();
         addUIClickListeners();
         setPreview();
@@ -82,6 +83,12 @@ public class MainActivity extends Activity{
         navSpinnerAdapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item, FileUtilities.getProjectNames());
         navSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         navSpinner.setAdapter(navSpinnerAdapter);
+
+        if(sharedPref.contains(SettingsActivity.KEY_PREF_PROJECT)) {
+            int selected = Math.min(navSpinnerAdapter.getCount() - 1, sharedPref.getInt(SettingsActivity.KEY_PREF_PROJECT, 0));
+            navSpinner.setSelection(selected);
+        }
+
         navSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -100,9 +107,6 @@ public class MainActivity extends Activity{
 
             }
         });
-        if(sharedPref.contains(SettingsActivity.KEY_PREF_PROJECT)) {
-            navSpinner.setSelection(sharedPref.getInt(SettingsActivity.KEY_PREF_PROJECT, 0));
-        }
     }
 
     private void addUIClickListeners(){
@@ -145,11 +149,13 @@ public class MainActivity extends Activity{
 
         switch (requestCode){
             case PROJEKTE_BEARBEITET:
-                gewaehlteProjekte = (ArrayList<String>)data.getExtras().get("chosenProjects");
-                //Startbutton sperren solang nicht alles kopiert ist
-                btnStartPresentation.setOnClickListener(null);
-                //Aktualisieren von tempCurrent
-                new updatePresentationFolder(this).execute();
+                if(resultCode==RESULT_OK) {
+                    gewaehlteProjekte = (ArrayList<String>) data.getExtras().get("chosenProjects");
+                    //Startbutton sperren solang nicht alles kopiert ist
+                    btnStartPresentation.setOnClickListener(null);
+                    //Aktualisieren von tempCurrent
+                    new updatePresentationFolder(this).execute();
+                }
                 break;
             default:
                 break;
@@ -162,7 +168,7 @@ public class MainActivity extends Activity{
 
         public updatePresentationFolder(Context ctx){
             context = ctx;
-            dialog = new ProgressDialog(context);
+            dialog = new ProgressDialog(ctx);
             dialog.setMessage("Updating Current Presentation...");
         }
 
@@ -219,6 +225,7 @@ public class MainActivity extends Activity{
         }else{
             setLayoutWeltenburger();
         }
+           setupSpinner(this);
 
         setPreview();
     }

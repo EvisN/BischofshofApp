@@ -3,6 +3,8 @@ package lp.german.bischofshofpresenter.app;
 import android.os.Environment;
 import android.util.Log;
 
+import com.joanzapata.pdfview.util.FileUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -87,6 +89,16 @@ public class FileUtilities {
         }
     }
 
+    public static void deleteProject(String path){
+        File folderToDelete = new File(path);
+        File[] files = folderToDelete.listFiles();
+        for(File file: files){
+            file.delete();
+        }
+        folderToDelete.delete();
+        Log.d("Delete:", path+" gelöscht");
+    }
+
     //Fügt anhand der gewählten Präsentationen die Dateien dem temporären Ordner hinzu
     public static void addFilesToPresentationTemp(ArrayList<String> paths) {
 
@@ -95,7 +107,7 @@ public class FileUtilities {
 
             File[] files = directory.listFiles();
 
-            for (int i= 0; i<files.length;i++) {
+             for (int i= 0; i<files.length;i++) {
                 File file = files[i];
                 File zielFile = new File(PFAD_PRAESENTATION + "/"+String.valueOf(i)+ file.getName());
                 Log.d("FILEVERGLIECH", file.getName() + "  "+zielFile.getName());

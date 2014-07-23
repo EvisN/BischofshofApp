@@ -9,8 +9,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -117,6 +119,29 @@ public class NeuesPraesentationActivity extends Activity {
         currentPresentation = new ArrayList<File>();
 
 
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String gewaehlteMarke = sharedPref.getString(SettingsActivity.KEY_PREF_MARKE, "");
+
+        if(gewaehlteMarke.equals("pref_bischofshof")){
+            setLayoutBischofshof();
+        }else{
+            setLayoutWeltenburger();
+        }
+    }
+
+    private void setLayoutBischofshof(){
+        ordner_explorer.setBackgroundResource(R.drawable.navigation_background);
+        datei_explorer.setBackgroundResource(R.drawable.skyline);
+    }
+
+    private void setLayoutWeltenburger(){
+        ordner_explorer.setBackgroundResource(R.drawable.grey_gradient);
+        datei_explorer.setBackgroundResource(R.drawable.background_line);
     }
 
     private void setupClickListeners() {
