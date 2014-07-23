@@ -64,6 +64,9 @@ public class NeuesPraesentationActivity extends Activity {
 
     private RelativeLayout relativeLayoutMenu;
 
+    private View clickedView;
+    private View viewToRemove;
+
 
 
     //Menu
@@ -186,6 +189,7 @@ public class NeuesPraesentationActivity extends Activity {
             @Override
             public void onClick(View v) {
                 menu.setVisibility(View.GONE);
+                clickedView.setBackgroundColor(Color.WHITE);
             }
         });
 
@@ -277,8 +281,8 @@ public class NeuesPraesentationActivity extends Activity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                removeFromView(view);
+                viewToRemove = view;
+                deleteDialog();
             }
         });
 
@@ -300,8 +304,8 @@ public class NeuesPraesentationActivity extends Activity {
         }
 
     }
-    private void removeFromView(View view){
-        LinearLayout ll = (LinearLayout)view.getParent();
+    private void removeFromView(){
+        LinearLayout ll = (LinearLayout)viewToRemove.getParent();
         TextView tv = (TextView)ll.getChildAt(1);
         String fileName = tv.getText().toString();
 
@@ -340,8 +344,8 @@ public class NeuesPraesentationActivity extends Activity {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
-                    removeFromView(view);
+                    viewToRemove = view;
+                    deleteDialog();
                 }
             });
 
@@ -407,6 +411,11 @@ public class NeuesPraesentationActivity extends Activity {
                         if (!currentFile.isDirectory()) {
                             clickedFile = currentFile;
                             openSideMenu();
+                            if(clickedView!=v&&clickedView!=null){
+                                clickedView.setBackgroundColor(Color.WHITE);
+                            }
+                            clickedView = v;
+                            v.setBackgroundColor(Color.GRAY);
                         } else {
                             BISCHOFSHOF_GEWAEHLT = currentFile.getAbsolutePath().toString().matches(".*Bischofshof.*");
 
@@ -534,10 +543,33 @@ public class NeuesPraesentationActivity extends Activity {
                 copyDirectory(currentPresentation, value);
 
                 deleteFilesFromDir(FileUtilities.PFAD_ROOT + "tempImages");
+                finish();
             }
         });
 
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // Canceled.
+            }
+        });
+
+        alert.show();
+    }
+
+    private void deleteDialog(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Löschen");
+        alert.setMessage("Soll das PDF wirklich aus der Auswahl gelöscht werden?");
+
+
+        alert.setPositiveButton("Ja", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                removeFromView();
+            }
+        });
+
+        alert.setNegativeButton("Nein", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 // Canceled.
             }
