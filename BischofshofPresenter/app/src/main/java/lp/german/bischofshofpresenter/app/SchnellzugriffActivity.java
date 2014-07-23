@@ -292,9 +292,9 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
             case R.id.open:
                 openFile(clickedFile);
                 return true;
-            case R.id.mail:
+            /*case R.id.mail:
                 //TODO Mailversenden
-                return true;
+                return true;*/
             default:
                 return false;
         }

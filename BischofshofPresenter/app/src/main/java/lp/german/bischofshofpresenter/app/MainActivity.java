@@ -154,7 +154,7 @@ public class MainActivity extends Activity{
                     //Startbutton sperren solang nicht alles kopiert ist
                     btnStartPresentation.setOnClickListener(null);
                     //Aktualisieren von tempCurrent
-                    new updatePresentationFolder(this).execute();
+                    new updatePresentationFolder(getApplicationContext()).execute();
                 }
                 break;
             default:

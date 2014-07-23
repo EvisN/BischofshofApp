@@ -329,9 +329,9 @@ public class GespeichertePraesentationenActivity extends Activity implements Pop
             case R.id.open:
                 openFile(clickedFile);
                 return true;
-            case R.id.mail:
+            /*case R.id.mail:
                 //TODO Mailversenden
-                return true;
+                return true;*/
             default:
                 return false;
         }
