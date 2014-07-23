@@ -15,6 +15,7 @@
     <RelativeLayout
         android:layout_width="200dp"
         android:layout_height="fill_parent"
+        android:id="@+id/neue_praesentation_navigation_rel"
         android:background="@drawable/navigation_background">
 
         <ImageButton
@@ -24,7 +25,7 @@
             android:src="@drawable/logo_weltenburger"
             android:id="@+id/logo_weltenburger"
             android:contentDescription="wb_logo"
-            android:background="@android:color/transparent"
+            android:background="@android:color/white"
             android:scaleType="fitXY"/>
 
         <View
@@ -134,7 +135,8 @@
         <ScrollView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/datei_explorer">
+            android:id="@+id/datei_explorer"
+            android:padding="40dp">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -165,8 +167,7 @@
             android:layout_marginLeft="4dp"
             android:layout_height="fill_parent"
             android:layout_alignParentRight="true"
-            android:id="@+id/btn_scroll_right"
-            />
+            android:id="@+id/btn_scroll_right"/>
 
         <ScrollView
             android:layout_width="fill_parent"
@@ -174,7 +175,7 @@
             android:layout_toRightOf="@id/btn_scroll_left"
             android:layout_toLeftOf="@id/btn_scroll_right"
             android:id="@+id/praesentations_explorer"
-            >
+            android:layout_margin="20dp">
 
             <LinearLayout
                 android:orientation="horizontal"
