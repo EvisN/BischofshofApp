@@ -60,6 +60,8 @@ public class SlideUpMenu extends Activity{
 
     private void setupScrollViewContent(final ArrayList<String> files){
 
+        View fileList = findViewById(R.id.file_scroll_view_linear_layout);
+
         for(int i = 0; i<files.size(); i++)
         {
             final int position = i;
@@ -84,7 +86,9 @@ public class SlideUpMenu extends Activity{
                 imageView.setImageResource(R.drawable.video);
             }
 
-            View fileList = findViewById(R.id.file_scroll_view_linear_layout);
+            if(i == index){
+                imageView.setBackgroundColor(android.R.color.darker_gray);
+            }
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -100,6 +104,28 @@ public class SlideUpMenu extends Activity{
             });
             ((ViewGroup)fileList).addView(v);
         }
+
+
+
+            String fileName = "...";
+            LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View v = vi.inflate(R.layout.file_template, null);
+
+            TextView textView = (TextView) v.findViewById(R.id.file_template_text);
+            textView.setText(fileName);
+
+            ImageView imageView = (ImageView) v.findViewById(R.id.file_template_img);
+
+            imageView.setImageResource(R.drawable.previous);
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+            ((ViewGroup)fileList).addView(v, 0);
+
     }
 }
 

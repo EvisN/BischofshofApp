@@ -17,6 +17,7 @@
         android:layout_height="match_parent"
         android:text="Platzhalter"
         android:layout_gravity="center"
+        android:textColor="@android:color/black"
         android:id="@+id/file_template_text"/>
 
 </LinearLayout>

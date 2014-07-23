@@ -10,7 +10,7 @@
         android:layout_height="200dp"
         android:id="@+id/file_scroll_view"
         android:layout_alignParentBottom="true"
-        android:background="@android:color/black"
+        android:background="@android:color/white"
         >
         <LinearLayout
             android:layout_width="wrap_content"

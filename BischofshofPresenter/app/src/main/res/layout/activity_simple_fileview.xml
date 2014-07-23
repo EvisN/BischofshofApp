@@ -44,7 +44,8 @@
     <ImageButton
         android:layout_width="100dp"
         android:layout_height="40dp"
-        android:background="@android:color/holo_blue_light"
+        android:src="@drawable/menue_praesentation_min"
+        android:scaleType="centerCrop"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:id="@+id/menuButton"/>

@@ -38,6 +38,7 @@ public class SimpleFileViewActivity extends Activity{
     private int currentFileIndex, lastIndex = 0;
     private int nOfElements;
     private boolean isSingleFile = false;
+    private int lastPage = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +96,7 @@ public class SimpleFileViewActivity extends Activity{
             try{
                 mVideoView.setVisibility(View.VISIBLE);
                 mPdfView.setVisibility(View.GONE);
+
                 Uri uri;
                 uri = Uri.parse(file.getAbsolutePath());
                 mVideoView.setVideoURI(uri);
@@ -182,6 +184,9 @@ public class SimpleFileViewActivity extends Activity{
                 Intent i = new Intent(context,SlideUpMenu.class);
                 i.putStringArrayListExtra("filePaths", filepaths);
                 i.putExtra("index", currentFileIndex);
+                if(mPdfView.getVisibility()==View.VISIBLE) {
+                    lastPage = mPdfView.getCurrentPage();
+                }
                 startActivityForResult(i,1);
             }
         });
@@ -255,7 +260,9 @@ public class SimpleFileViewActivity extends Activity{
                     }
                 }
                 if (resultCode == RESULT_CANCELED) {
-                    //Write your code if there's no result
+                    if(mPdfView.getVisibility()==View.VISIBLE) {
+                        mPdfView.jumpTo(lastPage);
+                    }
                 }
                 break;
             default:
