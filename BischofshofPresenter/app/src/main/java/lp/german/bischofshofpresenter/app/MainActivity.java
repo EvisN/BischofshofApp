@@ -160,6 +160,9 @@ public class MainActivity extends Activity{
                     //Startbutton sperren solang nicht alles kopiert ist
                     btnStartPresentation.setOnClickListener(null);
                     //Aktualisieren von tempCurrent
+                    if(dialog!=null) {
+                        dialog.dismiss();
+                    }
                     new updatePresentationFolder(this).execute();
                     break;
                 }
@@ -194,8 +197,7 @@ public class MainActivity extends Activity{
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            if(dialog!=null) {
-                dialog.dismiss();
+
                 if(FileUtilities.getNumberOfFilesFromPath(FileUtilities.PFAD_PRAESENTATION)!=0) {
                     btnStartPresentation.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -216,7 +218,7 @@ public class MainActivity extends Activity{
                     });
                     setPreview();
                 }
-            }
+
         }
     }
 
@@ -270,6 +272,10 @@ public class MainActivity extends Activity{
     }
 
     private void setPreview(){
+
+        if(dialog!=null) {
+            dialog.dismiss();
+        }
         try {
             File directory = new File(gewaehlteProjekte.get(0));
             File[] files = directory.listFiles();

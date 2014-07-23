@@ -123,13 +123,13 @@
         android:layout_height="1dp"
         android:layout_toRightOf="@id/vSpace"
         android:background="@android:color/black"
-        android:layout_marginTop="450dp"
+        android:layout_marginTop="500dp"
         android:id="@+id/hSpace"
         />
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="450dp"
+        android:layout_height="500dp"
         android:layout_toRightOf="@id/vSpace"
         >
         <ScrollView
@@ -150,7 +150,7 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="220dp"
+        android:layout_height="170dp"
         android:layout_toRightOf="@id/vSpace"
         android:layout_alignParentBottom="true"
         >

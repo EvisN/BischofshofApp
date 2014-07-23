@@ -50,6 +50,8 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
 
     private int FOLDER_ICON;
 
+    private int design_int = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +107,7 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
         btn_bh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mMarke = "pref_bischofshof";
                 setDesignBischofshof();
                 addItemsToContainer(FileUtilities.PFAD_BH);
                 addItems(FileUtilities.PFAD_BH);
@@ -114,6 +117,7 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
         btn_wb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mMarke = "";
                 setDesignWeltenburger();
                 addItemsToContainer(FileUtilities.PFAD_WB);
                 addItems(FileUtilities.PFAD_WB);

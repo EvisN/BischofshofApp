@@ -10,7 +10,7 @@ public class NavDrawerItem {
     private String absolutePath;
     // boolean to set visiblity of the counter
     private boolean isCounterVisible = false;
-    private boolean isChecked = false;
+    private int design_int = 0;
 
     public NavDrawerItem(){}
 
@@ -24,14 +24,6 @@ public class NavDrawerItem {
         this.isCounterVisible = isCounterVisible;
         this.count = count;
         this.absolutePath = absolutePath;
-    }
-
-    public void setChecked(){
-        isChecked = isChecked ? false : true;
-    }
-
-    public boolean isItemChecked(){
-        return isChecked;
     }
 
     public String getTitle(){
@@ -54,12 +46,6 @@ public class NavDrawerItem {
         this.title = title;
     }
 
-    public void setCount(String count){
-        this.count = count;
-    }
 
-    public void setCounterVisibility(boolean isCounterVisible){
-        this.isCounterVisible = isCounterVisible;
-    }
 
 }
