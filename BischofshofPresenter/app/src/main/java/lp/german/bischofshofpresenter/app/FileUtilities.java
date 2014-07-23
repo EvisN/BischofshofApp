@@ -76,6 +76,17 @@ public class FileUtilities {
         return projectNames;
     }
 
+    public static ArrayList<String> getAbsolutePathsFromTemCurrent(){
+        File tempCurrent = new File(PFAD_PRAESENTATION);
+        File[] projectFiles = tempCurrent.listFiles();
+        ArrayList<String> response = new ArrayList<String>();
+        for(File f: projectFiles){
+            response.add(f.getAbsolutePath());
+        }
+
+        return response;
+    }
+
     //Löscht den temporären Ordner der aktuellen Präsentation
     public static void emptyTempFolder() {
         File directory = new File(PFAD_PRAESENTATION);

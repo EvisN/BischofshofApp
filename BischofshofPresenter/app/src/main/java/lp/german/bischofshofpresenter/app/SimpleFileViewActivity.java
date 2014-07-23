@@ -58,9 +58,9 @@ public class SimpleFileViewActivity extends Activity{
     }
 
     private void setMultiFileView() {
-        filepaths = getIntent().getStringArrayListExtra("filePaths");
+        filepaths = FileUtilities.getAbsolutePathsFromTemCurrent();
         nOfElements = filepaths.size();
-        file = new File(FileUtilities.PFAD_PRAESENTATION + "/" + filepaths.get(currentFileIndex));
+        file = new File(filepaths.get(currentFileIndex));
     }
 
     private void setSingleFileView() {
