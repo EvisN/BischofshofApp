@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.VideoView;
 
@@ -30,7 +28,7 @@ public class SimpleFileViewActivity extends Activity{
     private VideoView mVideoView;
     private ProgressDialog dialog;
     private File file;
-    private ImageButton menuButton;
+    private ImageView menuButton;
     private ArrayList<String> filepaths;
     private boolean hasNextFile, hasPreviousFile;
     private ImageView previous, next;
@@ -171,7 +169,7 @@ public class SimpleFileViewActivity extends Activity{
         String path = getIntent().getExtras().getString("file");
         file = new File(path);
         mPdfView = (PDFView) findViewById(R.id.pdfview);
-        menuButton = (ImageButton)findViewById(R.id.menuButton);
+        menuButton = (ImageView)findViewById(R.id.menuButton);
         mVideoView = (VideoView)findViewById(R.id.videoview);
         previous = (ImageView)findViewById(R.id.previous_file);
         next = (ImageView)findViewById(R.id.next_file);

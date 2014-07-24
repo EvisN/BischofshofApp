@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- the theme applied to the application or activity -->
-    <style name="CustomActionBarTheme"
-        parent="@android:style/Theme.Holo.Light.DarkActionBar">
-        <item name="android:actionBarStyle">@style/MyActionBar</item>
+
+    <style name="CustomActionBarTheme" parent="CustomActionBarTheme">
+        <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
     </style>
 
-    <!-- ActionBar styles -->
-    <style name="MyActionBar"
-        parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:displayOptions">showHome|homeAsUp|showTitle</item>
-        <item name="displayOptions">showHome|homeAsUp|showTitle</item>
-        <item name="android:icon">@android:color/transparent</item>
+    <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">optima</item>
+    </style>
+
+    <style name="RobotoButtonStyle" parent="android:Widget.Holo.Button">
+        <item name="android:fontFamily">optima</item>
     </style>
 </resources>

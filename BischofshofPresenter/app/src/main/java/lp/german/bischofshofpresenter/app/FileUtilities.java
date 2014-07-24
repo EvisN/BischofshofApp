@@ -3,8 +3,6 @@ package lp.german.bischofshofpresenter.app;
 import android.os.Environment;
 import android.util.Log;
 
-import com.joanzapata.pdfview.util.FileUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -28,6 +26,15 @@ public class FileUtilities {
     public static String PFAD_PROJEKTE = Environment.getExternalStorageDirectory() + "/BischofsHofApp/Projekte";
     public static String PFAD_PRAESENTATION = Environment.getExternalStorageDirectory() + "/BischofsHofApp/tempCurrent";
 
+    public static ArrayList<String> SUPPORTED_MEDIA_FORMATS;
+
+    static {
+        SUPPORTED_MEDIA_FORMATS = new ArrayList<String>() {{
+            add("3gp");
+            add("mp4");
+        }};
+    }
+
     //Gibt Dateiendung zurück
     public static String getFileExtension(String fileName) {
         String filenameArray[] = fileName.split("\\.");
@@ -41,8 +48,8 @@ public class FileUtilities {
         ArrayList<String> filePaths = new ArrayList<String>();
 
         if (filesList != null) {
-            for (int i = 0; i < filesList.length; i++) {
-                filePaths.add(filesList[i].getName());
+            for (File f: filesList) {
+                filePaths.add(f.getName());
             }
         }
 
@@ -107,7 +114,6 @@ public class FileUtilities {
             file.delete();
         }
         folderToDelete.delete();
-        Log.d("Delete:", path+" gelöscht");
     }
 
     //Fügt anhand der gewählten Präsentationen die Dateien dem temporären Ordner hinzu
@@ -139,9 +145,9 @@ public class FileUtilities {
                 }
 
                 String[] children = sourceLocation.list();
-                for (int i = 0; i < children.length; i++) {
-                    copyFilesFromPathToPath(new File(sourceLocation, children[i]),
-                            new File(targetLocation, children[i]));
+                for (String s: children) {
+                    copyFilesFromPathToPath(new File(sourceLocation, s),
+                            new File(targetLocation, s));
                 }
             } else {
 

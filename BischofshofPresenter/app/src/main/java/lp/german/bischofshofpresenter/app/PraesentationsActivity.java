@@ -10,8 +10,6 @@ import android.view.WindowManager;
 import java.io.File;
 import java.util.ArrayList;
 
-import lp.german.bischofshofpresenter.app.SimpleGestureFilter.SimpleGestureListener;
-
 public class PraesentationsActivity extends Activity{
 
     private SimpleGestureFilter detector;

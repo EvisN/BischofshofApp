@@ -1,6 +1,5 @@
 package lp.german.bischofshofpresenter.app;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +9,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,11 +16,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -209,12 +205,16 @@ public class SchnellzugriffActivity extends Activity implements PopupMenu.OnMenu
 
                 ImageView imageView = (ImageView) v.findViewById(R.id.file_template_img);
 
-
-                if (FileUtilities.getFileExtension(fileName).equals("pdf")) {
+                String fileExtension = FileUtilities.getFileExtension(fileName);
+                if (fileExtension.equals("pdf")) {
                     imageView.setImageResource(R.drawable.pdf2);
                 } else {
                     if (!files[i].isDirectory()) {
-                        imageView.setImageResource(R.drawable.video);
+                        if(FileUtilities.SUPPORTED_MEDIA_FORMATS.contains((String)fileExtension)) {
+                            imageView.setImageResource(R.drawable.video);
+                        }else{
+                            continue;
+                        }
                     } else {
                        imageView.setImageResource(FOLDER_ICON);
                     }

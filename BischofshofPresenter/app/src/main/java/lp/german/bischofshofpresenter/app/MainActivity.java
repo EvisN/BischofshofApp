@@ -1,12 +1,10 @@
 package lp.german.bischofshofpresenter.app;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,23 +15,20 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.VideoView;
+
+import com.joanzapata.pdfview.PDFView;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import com.joanzapata.pdfview.PDFView;
-
 public class MainActivity extends Activity{
 
-    private ImageView btnStartPresentation, imgLogo, btnEinstellungen, btnNeuePraesentation, btnGespeichertePraesentationen, btnSchnellzugriff, backgroundStartPresentation, imgNavBackground;
     public static final int PROJEKTE_BEARBEITET = 105;
+    private ImageView btnStartPresentation, imgLogo, btnEinstellungen, btnNeuePraesentation, btnGespeichertePraesentationen, btnSchnellzugriff, backgroundStartPresentation, imgNavBackground, btnPlay;
     private ArrayList<String> gewaehlteProjekte;
     private ProgressDialog dialog;
     private PDFView pdfView;
@@ -41,10 +36,7 @@ public class MainActivity extends Activity{
     private File firstFile;
     private TextView txtNoPresentation;
     private Spinner navSpinner;
-    private ArrayAdapter navSpinnerAdapter;
-    private ArrayList<String> navSpinnerItems;
     private SharedPreferences sharedPref;
-    private static Context staticContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +46,6 @@ public class MainActivity extends Activity{
         setContentView(R.layout.activity_main);
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        staticContext = this.getApplicationContext();
 
         setupUIElements();
         checkDesign();
@@ -74,6 +65,7 @@ public class MainActivity extends Activity{
         btnNeuePraesentation = (ImageView)findViewById(R.id.btn_new_presentation);
         btnGespeichertePraesentationen = (ImageView)findViewById(R.id.btn_saved_presentations);
         btnSchnellzugriff = (ImageView)findViewById(R.id.btn_schnellzugriff);
+        btnPlay = (ImageView)findViewById(R.id.btn_play);
 
         pdfView = (PDFView)findViewById(R.id.pdf_view);
         videoView = (VideoView)findViewById(R.id.videoview);
@@ -84,9 +76,8 @@ public class MainActivity extends Activity{
     }
 
     private void setupSpinner(final Context ctx) {
-        final Context context = ctx;
         navSpinner = (Spinner)findViewById(R.id.nav_spinner);
-        navSpinnerAdapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item, FileUtilities.getProjectNames());
+        ArrayAdapter navSpinnerAdapter = new ArrayAdapter(this,android.R.layout.simple_spinner_item, FileUtilities.getProjectNames());
         navSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         navSpinner.setAdapter(navSpinnerAdapter);
 
@@ -105,7 +96,7 @@ public class MainActivity extends Activity{
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putInt(SettingsActivity.KEY_PREF_PROJECT, position);
                 editor.commit();
-                new updatePresentationFolder(context).execute();
+                new updatePresentationFolder(ctx).execute();
             }
 
             @Override
@@ -158,7 +149,7 @@ public class MainActivity extends Activity{
                 if(resultCode==RESULT_OK) {
                     gewaehlteProjekte = (ArrayList<String>) data.getExtras().get("chosenProjects");
                     //Startbutton sperren solang nicht alles kopiert ist
-                    btnStartPresentation.setOnClickListener(null);
+                    btnPlay.setOnClickListener(null);
                     //Aktualisieren von tempCurrent
                     if(dialog!=null) {
                         dialog.dismiss();
@@ -174,10 +165,8 @@ public class MainActivity extends Activity{
 
     //Aktualisieren von tempCurrent, erst löschen des Ordners und dann kopieren der gewählten Projekte
     private class updatePresentationFolder extends AsyncTask<String, Void, String>{
-        private Context context;
 
         public updatePresentationFolder(Context ctx){
-            context = ctx;
             dialog = new ProgressDialog(ctx);
             dialog.setMessage("Updating Current Presentation...");
         }
@@ -189,7 +178,6 @@ public class MainActivity extends Activity{
         }
         @Override
         protected String doInBackground(String... args) {
-            //TODO Kopieren wahrscheinlich nicht notwendig
             FileUtilities.emptyTempFolder();
             FileUtilities.addFilesToPresentationTemp(gewaehlteProjekte);
             return "";
@@ -199,7 +187,7 @@ public class MainActivity extends Activity{
             super.onPostExecute(result);
 
                 if(FileUtilities.getNumberOfFilesFromPath(FileUtilities.PFAD_PRAESENTATION)!=0) {
-                    btnStartPresentation.setOnClickListener(new View.OnClickListener() {
+                    btnPlay.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             pdfView.recycle();

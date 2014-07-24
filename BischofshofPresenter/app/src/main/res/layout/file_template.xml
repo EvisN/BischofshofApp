@@ -9,8 +9,7 @@
     <ImageView
         android:layout_width="160dp"
         android:layout_height="160dp"
-        android:id="@+id/file_template_img"
-        android:src="@drawable/ic_launcher"/>
+        android:id="@+id/file_template_img"/>
 
     <TextView
         android:layout_width="160dp"

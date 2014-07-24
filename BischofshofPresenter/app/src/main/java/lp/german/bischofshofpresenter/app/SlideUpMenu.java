@@ -4,12 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -18,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
@@ -87,7 +83,7 @@ public class SlideUpMenu extends Activity{
             }
 
             if(i == index){
-                imageView.setBackgroundColor(android.R.color.darker_gray);
+                v.setBackgroundColor(android.R.color.darker_gray);
             }
 
             v.setOnClickListener(new View.OnClickListener() {

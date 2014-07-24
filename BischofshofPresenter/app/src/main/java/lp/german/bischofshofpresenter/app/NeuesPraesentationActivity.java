@@ -11,18 +11,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewManager;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
@@ -39,7 +34,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import lp.german.slidingmenu.model.NavDrawerItem;
@@ -262,11 +256,16 @@ public class NeuesPraesentationActivity extends Activity {
         textView.setText(fileName);
         ImageView imageView = (ImageView) v.findViewById(R.id.file_template_img);
 
-        if (FileUtilities.getFileExtension(fileName).equals("pdf")) {
+        String fileExtension = FileUtilities.getFileExtension(fileName);
+        if (fileExtension.equals("pdf")) {
             imageView.setImageResource(R.drawable.pdf2);
         } else {
             if (!clickedFile.isDirectory()) {
-                imageView.setImageResource(R.drawable.video);
+                if(FileUtilities.SUPPORTED_MEDIA_FORMATS.contains(fileExtension)) {
+                    imageView.setImageResource(R.drawable.video);
+                }else{
+                    return;
+                }
             } else {
                 if(BISCHOFSHOF_GEWAEHLT){
                     imageView.setImageResource(FOLDER_ICON);
