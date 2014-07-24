@@ -388,12 +388,16 @@ public class NeuesPraesentationActivity extends Activity {
 
                 ImageView imageView = (ImageView) v.findViewById(R.id.file_template_img);
 
-
-                if (FileUtilities.getFileExtension(fileName).equals("pdf")) {
+                String fileExtension = FileUtilities.getFileExtension(fileName);
+                if (fileExtension.equals("pdf")) {
                     imageView.setImageResource(R.drawable.pdf2);
                 } else {
                     if (!files[i].isDirectory()) {
-                        imageView.setImageResource(R.drawable.video);
+                        if(FileUtilities.SUPPORTED_MEDIA_FORMATS.contains(fileExtension)) {
+                            imageView.setImageResource(R.drawable.video);
+                        }else{
+                            return;
+                        }
                     } else {
                         if(BISCHOFSHOF_GEWAEHLT){
                             imageView.setImageResource(FOLDER_ICON);
